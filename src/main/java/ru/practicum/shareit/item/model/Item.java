@@ -21,6 +21,7 @@ import javax.validation.constraints.Pattern;
 public class Item {
     private long id;
     @NotBlank(groups = Marker.OnCreate.class)
+    @Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z][а-яА-ЯёЁa-zA-Z0-9]+$", message = "недопустимые символы в поле name")
     private String name;
     @NotBlank(groups = Marker.OnCreate.class)
     private String description;
