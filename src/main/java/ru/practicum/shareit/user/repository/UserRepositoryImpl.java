@@ -16,13 +16,13 @@ import java.util.Map;
 public class UserRepositoryImpl implements UserRepository {
     long userId = 0;
 
-    private Map<Long, User> USERS = new HashMap<>();
+    private Map<Long, User> users = new HashMap<>();
 
     @Override
     public User create(User user) {
         long currentId = increaseUserId();
         user.setId(currentId);
-        USERS.put(currentId, user);
+        users.put(currentId, user);
         return user;
     }
 
@@ -44,17 +44,17 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User getUserById(long id) {
-        return USERS.get(id);
+        return users.get(id);
     }
 
     @Override
     public List<User> getAllUsers() {
-        return new ArrayList<>(USERS.values());
+        return new ArrayList<>(users.values());
     }
 
     @Override
     public void removeUser(long id) {
-        USERS.remove(id);
+        users.remove(id);
     }
 
     private Long increaseUserId() {

@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ItemRepositoryImpl implements ItemRepository {
-    private Map<Long, List<Item>> ITEMS = new HashMap<>();
+    private Map<Long, List<Item>> items = new HashMap<>();
     private long currentId = 0;
 
     @Override
@@ -28,18 +28,18 @@ public class ItemRepositoryImpl implements ItemRepository {
         item.setId(increaseId());
         List<Item> itemList = new ArrayList<>();
         itemList.add(item);
-        ITEMS.put(userId, itemList);
+        items.put(userId, itemList);
         return item;
     }
 
     @SneakyThrows
     @Override
     public Item updateItem(long userId, long id, Item item) {
-        List<Item> currentItemList = ITEMS.get(userId);
+        List<Item> currentItemList = items.get(userId);
         if (currentItemList == null) {
             throw new SQLDataException("Список вещей данного позьзователя пуст");
         }
-        Item currentItem = ITEMS.get(userId).stream()
+        Item currentItem = items.get(userId).stream()
                 .filter(i -> i.getId() == id)
                 .findFirst()
                 .orElseThrow((Supplier<Throwable>) () -> new SQLDataException("У данного пользователя нет вещи под ID: " + id));
@@ -52,7 +52,7 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public Item getItemById(long userId, long id) {
-        return ITEMS.values().stream()
+        return items.values().stream()
                 .flatMap(List::stream)
                 .filter(item -> item.getId() == id)
                 .findFirst().get();
@@ -60,12 +60,12 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public List<Item> getAllItemByUser(long userId) {
-        return ITEMS.get(userId);
+        return items.get(userId);
     }
 
     @Override
     public List<Item> search(String text) {
-        List<Item> items = ITEMS.values().stream()
+        List<Item> items = this.items.values().stream()
                 .flatMap(List::stream)
                 .filter(item -> (item.getName().toLowerCase().contains(text) ||
                         item.getDescription().toLowerCase().contains(text)))
