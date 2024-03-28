@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.validation.ConstraintViolationException;
+import java.sql.SQLDataException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,6 +48,13 @@ public class ErrorHandlingControllerAdvice {
     @ResponseStatus(HttpStatus.CONFLICT)
     @ResponseBody
     public Violation onServiceArgumentNotValidException(IllegalArgumentException e) {
+        return new Violation(e.getClass().toString(), e.getMessage());
+    }
+
+    @ExceptionHandler(SQLDataException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public Violation onServiceNotFoundException(SQLDataException e) {
         return new Violation(e.getClass().toString(), e.getMessage());
     }
 }

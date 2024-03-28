@@ -21,6 +21,6 @@ public class User {
     @NotBlank(groups = Marker.OnCreate.class)
     @Email
     private String email;
-    @NotBlank (groups = Marker.OnCreate.class)
+    @NotBlank(groups = Marker.OnCreate.class)
     private String name;
 }

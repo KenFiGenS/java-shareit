@@ -1,44 +1,50 @@
 package ru.practicum.shareit.user.service;
 
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.user.userDto.UserDto;
+import ru.practicum.shareit.user.userDto.UserMapper;
 
+import java.sql.SQLDataException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Override
-    public User create(User user) {
+    public UserDto create(User user) {
         emailExist(0, user);
-        return userRepository.create(user);
+        return UserMapper.touserDto(userRepository.create(user));
     }
 
     @Override
-    public User patch(long id, User user) {
+    public UserDto patch(long id, User user) {
         getUserById(id);
         emailExist(id, user);
-        return userRepository.patch(id, user);
+        return UserMapper.touserDto(userRepository.patch(id, user));
     }
 
+    @SneakyThrows
     @Override
-    public User getUserById(long id) {
+    public UserDto getUserById(long id) {
         User currentUser = userRepository.getUserById(id);
         if (currentUser == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь с ID: " + id + " не найден");
+            throw new SQLDataException("Пользователь c ID: " + id + " не найден!");
         }
-        return currentUser;
+        return UserMapper.touserDto(currentUser);
     }
 
     @Override
-    public List<User> getAllUsers() {
-        return userRepository.getAllUsers();
+    public List<UserDto> getAllUsers() {
+        return userRepository.getAllUsers().stream()
+                .map(UserMapper::touserDto)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -48,8 +54,9 @@ public class UserServiceImpl implements UserService{
 
     private void emailExist(long id, User user) {
         userRepository.getAllUsers()
-                .forEach(u -> { if (u.getEmail().equals(user.getEmail()) && u.getId() != id)
-                    throw new IllegalArgumentException("Данный email уже существует");
+                .forEach(u -> {
+                    if (u.getEmail().equals(user.getEmail()) && u.getId() != id)
+                        throw new IllegalArgumentException("Данный email уже существует");
                 });
     }
 }

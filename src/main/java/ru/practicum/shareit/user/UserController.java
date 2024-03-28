@@ -6,6 +6,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exceptionControllers.Marker;
 import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.user.userDto.UserDto;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -23,25 +24,25 @@ public class UserController {
 
     @PostMapping
     @Validated({Marker.OnCreate.class})
-    public User createUser(@Valid @RequestBody User user) {
+    public UserDto createUser(@Valid @RequestBody User user) {
         log.info("Выполняется запрос на создание пользователя");
         return userService.create(user);
     }
 
     @PatchMapping("/{id}")
-    public User updateUser(@PathVariable long id, @RequestBody User user) {
+    public UserDto updateUser(@PathVariable long id, @RequestBody User user) {
         log.info("Выполниется запрос обновления пользователя под ID: " + id);
         return userService.patch(id, user);
     }
 
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable long id) {
+    public UserDto getUserById(@PathVariable long id) {
         log.info("Выполняется запрос поиска пользователя по ID: " + id);
         return userService.getUserById(id);
     }
 
     @GetMapping
-    public List<User> getAllUser() {
+    public List<UserDto> getAllUser() {
         log.info("Выполняется запрос поиска всех пользователей");
         return userService.getAllUsers();
     }
