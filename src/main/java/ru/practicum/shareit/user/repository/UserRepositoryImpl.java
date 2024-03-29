@@ -14,7 +14,7 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
-    long userId = 0;
+    private long userId = 0;
 
     private Map<Long, User> users = new HashMap<>();
 
@@ -34,9 +34,9 @@ public class UserRepositoryImpl implements UserRepository {
         if (updateName != null && updateEmail != null) {
             currentUserByUpdate.setName(updateName);
             currentUserByUpdate.setEmail(updateEmail);
-        } else if (updateName != null) {
+        } else if (updateName != null && !updateName.isBlank()) {
             currentUserByUpdate.setName(updateName);
-        } else {
+        } else if (updateEmail != null && !updateEmail.isBlank()){
             currentUserByUpdate.setEmail(updateEmail);
         }
         return currentUserByUpdate;

@@ -11,9 +11,6 @@ import ru.practicum.shareit.user.userDto.UserDto;
 import javax.validation.Valid;
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Slf4j
 @RestController
 @AllArgsConstructor
@@ -24,20 +21,21 @@ public class UserController {
 
     @PostMapping
     @Validated({Marker.OnCreate.class})
-    public UserDto createUser(@Valid @RequestBody User user) {
+    public UserDto createUser(@Valid @RequestBody UserDto userDto) {
         log.info("Выполняется запрос на создание пользователя");
-        return userService.create(user);
+        return userService.create(userDto);
     }
 
     @PatchMapping("/{id}")
-    public UserDto updateUser(@PathVariable long id, @RequestBody User user) {
-        log.info("Выполниется запрос обновления пользователя под ID: " + id);
-        return userService.patch(id, user);
+    @Validated({Marker.OnUpdate.class})
+    public UserDto updateUser(@PathVariable long id, @Valid @RequestBody UserDto userDto) {
+        log.info("Выполниется запрос обновления пользователя под ID: {}", id);
+        return userService.patch(id, userDto);
     }
 
     @GetMapping("/{id}")
     public UserDto getUserById(@PathVariable long id) {
-        log.info("Выполняется запрос поиска пользователя по ID: " + id);
+        log.info("Выполняется запрос поиска пользователя по ID: {}", id);
         return userService.getUserById(id);
     }
 

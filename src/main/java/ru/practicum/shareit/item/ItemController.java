@@ -12,9 +12,8 @@ import ru.practicum.shareit.item.service.ItemService;
 import javax.validation.Valid;
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
+import static ru.practicum.shareit.constans.Constants.REQUEST_HEADER_NAME;
+
 
 @Slf4j
 @RestController
@@ -27,34 +26,34 @@ public class ItemController {
 
     @PostMapping
     @Validated(Marker.OnCreate.class)
-    public ItemDto createItem(@RequestHeader("X-Sharer-User-Id") long userId, @Valid @RequestBody Item item) {
+    public ItemDto createItem(@RequestHeader(REQUEST_HEADER_NAME) long userId, @Valid @RequestBody ItemDto item) {
         log.info("Выполняется запрос создания вещи");
         return itemService.createItem(userId, item);
     }
 
     @PatchMapping("/{id}")
-    public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") long userId,
+    public ItemDto updateItem(@RequestHeader(REQUEST_HEADER_NAME) long userId,
                               @PathVariable long id,
-                              @RequestBody Item item) {
-        log.info("Выполняется запрос обновления вещи под ID: " + id + " пользователя под ID: " + userId);
+                              @RequestBody ItemDto item) {
+        log.info("Выполняется запрос обновления вещи под ID: {} пользователя под ID: {}", id, userId);
         return itemService.updateItem(userId, id, item);
     }
 
     @GetMapping("/{id}")
-    public ItemDto getItemById(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long id) {
-        log.info("Выполняется запрос получения информации вещи по ID: " + id + " от пользователя под ID: " + userId);
+    public ItemDto getItemById(@RequestHeader(REQUEST_HEADER_NAME) long userId, @PathVariable long id) {
+        log.info("Выполняется запрос получения информации вещи по ID: {} от пользователя под ID: {}", id, userId);
         return itemService.getItemById(userId, id);
     }
 
     @GetMapping
-    public List<ItemDto> getAllItemByOwner(@RequestHeader("X-Sharer-User-Id") long userId) {
-        log.info("Выполняется запрос получения всех вещей пользователя под ID: " + userId);
+    public List<ItemDto> getAllItemByOwner(@RequestHeader(REQUEST_HEADER_NAME) long userId) {
+        log.info("Выполняется запрос получения всех вещей пользователя под ID: {}", userId);
         return itemService.getAllItemByOwner(userId);
     }
 
     @GetMapping("/search")
     public List<ItemDto> searchByNameAndDescription(@RequestParam String text) {
-        log.info("Выполняется запрос поиска по имени и описанию. Текст запроса: " + text);
+        log.info("Выполняется запрос поиска по имени и описанию. Текст запроса: {}", text);
         return itemService.search(text);
     }
 }

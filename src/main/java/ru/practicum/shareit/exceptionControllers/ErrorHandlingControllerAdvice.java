@@ -1,26 +1,26 @@
 package ru.practicum.shareit.exceptionControllers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.validation.ConstraintViolationException;
-import java.sql.SQLDataException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@ControllerAdvice
+@Slf4j
+@RestControllerAdvice
 public class ErrorHandlingControllerAdvice {
 
-    @ResponseBody
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ValidationErrorResponse onConstraintValidationException(
             ConstraintViolationException e
     ) {
+        log.debug("Получен статус 409 Bad Request {}", e.getMessage(), e);
         final List<Violation> violations = e.getConstraintViolations().stream()
                 .map(
                         violation -> new Violation(
@@ -34,10 +34,10 @@ public class ErrorHandlingControllerAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
     public ValidationErrorResponse onMethodArgumentNotValidException(
             MethodArgumentNotValidException e
     ) {
+        log.debug("Получен статус 409 Bad Request {}", e.getMessage(), e);
         final List<Violation> violations = e.getBindingResult().getFieldErrors().stream()
                 .map(error -> new Violation(error.getField(), error.getDefaultMessage()))
                 .collect(Collectors.toList());
@@ -46,15 +46,22 @@ public class ErrorHandlingControllerAdvice {
 
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    @ResponseBody
     public Violation onServiceArgumentNotValidException(IllegalArgumentException e) {
+        log.debug("Получен статус 400 Conflict {}", e.getMessage(), e);
         return new Violation(e.getClass().toString(), e.getMessage());
     }
 
-    @ExceptionHandler(SQLDataException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ResponseBody
-    public Violation onServiceNotFoundException(SQLDataException e) {
+    @ExceptionHandler(DataNotFound.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public Violation onServiceArgumentNotValidException(DataNotFound e) {
+        log.debug("Получен статус 404 Not Found {}", e.getMessage(), e);
+        return new Violation(e.getClass().toString(), e.getMessage());
+    }
+
+    @ExceptionHandler(Throwable.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Violation onOthersException(Throwable e) {
+        log.debug("Получен статус 500 Internal Server Error {}", e.getMessage(), e);
         return new Violation(e.getClass().toString(), e.getMessage());
     }
 }
