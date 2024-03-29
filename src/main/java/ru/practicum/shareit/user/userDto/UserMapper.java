@@ -1,7 +1,5 @@
 package ru.practicum.shareit.user.userDto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.user.User;
 

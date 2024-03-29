@@ -1,7 +1,6 @@
 package ru.practicum.shareit.user.userDto;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import ru.practicum.shareit.exceptionControllers.Marker;
 
