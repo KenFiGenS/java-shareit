@@ -2,16 +2,14 @@ package ru.practicum.shareit.item.service;
 
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-import ru.practicum.shareit.exceptionControllers.DataNotFound;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.user.userDto.UserMapper;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,15 +18,12 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @SneakyThrows
     @Override
     public ItemDto createItem(long userId, ItemDto itemDto) {
-        User cuttentUser = userRepository.getUserById(userId);
-        if (cuttentUser == null) {
-            throw new DataNotFound("Пользователь c ID: " + userId + " не найден!");
-        }
+        User cuttentUser = UserMapper.toUser(userService.getUserById(userId));
         Item item = ItemMapper.toItem(itemDto, cuttentUser);
         Item itemAfterCreate = itemRepository.createItem(userId, item);
         return ItemMapper.toItemDto(itemAfterCreate);
@@ -37,11 +32,7 @@ public class ItemServiceImpl implements ItemService {
     @SneakyThrows
     @Override
     public ItemDto updateItem(long userId, long id, ItemDto itemDto) {
-        User cuttentUser = userRepository.getUserById(userId);
-        if (cuttentUser == null) {
-            throw new DataNotFound("Пользователь c ID: " + userId + " не найден!");
-        }
-        Item item = ItemMapper.toItem(itemDto, cuttentUser);
+        Item item = ItemMapper.toItem(itemDto, UserMapper.toUser(userService.getUserById(userId)));
         Item itemAfterUpdate = itemRepository.updateItem(userId, id, item);
         return ItemMapper.toItemDto(itemAfterUpdate);
     }

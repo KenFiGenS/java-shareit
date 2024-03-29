@@ -6,6 +6,7 @@ import lombok.Data;
 import ru.practicum.shareit.exceptionControllers.Marker;
 import ru.practicum.shareit.request.ItemRequest;
 
+import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
@@ -20,8 +21,7 @@ public class ItemDto {
     private String name;
     @NotBlank(groups = Marker.OnCreate.class)
     private String description;
-    @NotBlank(groups = Marker.OnCreate.class)
-    @Pattern(regexp = "^(true|false)$", message = "значения переменной available должны быть: true или false")
+    @AssertTrue(groups = Marker.OnCreate.class)
     private boolean available;
     private ItemRequest request;
 }

@@ -1,6 +1,5 @@
 package ru.practicum.shareit.constans;
 
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass

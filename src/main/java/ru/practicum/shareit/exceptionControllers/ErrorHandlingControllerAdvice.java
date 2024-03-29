@@ -11,8 +11,9 @@ import javax.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Slf4j
+
 @RestControllerAdvice
+@Slf4j
 public class ErrorHandlingControllerAdvice {
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -52,7 +53,7 @@ public class ErrorHandlingControllerAdvice {
     }
 
     @ExceptionHandler(DataNotFound.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public Violation onServiceArgumentNotValidException(DataNotFound e) {
         log.debug("Получен статус 404 Not Found {}", e.getMessage(), e);
         return new Violation(e.getClass().toString(), e.getMessage());

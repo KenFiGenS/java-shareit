@@ -36,7 +36,7 @@ public class UserRepositoryImpl implements UserRepository {
             currentUserByUpdate.setEmail(updateEmail);
         } else if (updateName != null && !updateName.isBlank()) {
             currentUserByUpdate.setName(updateName);
-        } else if (updateEmail != null && !updateEmail.isBlank()){
+        } else if (updateEmail != null && !updateEmail.isBlank()) {
             currentUserByUpdate.setEmail(updateEmail);
         }
         return currentUserByUpdate;

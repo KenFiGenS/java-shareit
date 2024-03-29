@@ -47,9 +47,19 @@ public class ItemRepositoryImpl implements ItemRepository {
                 .orElseThrow((Supplier<Throwable>) () ->
                         new DataNotFound("У данного пользователя нет вещи под ID: " + id));
         item.setId(currentItem.getId());
-        if (item.getName() != null && !item.getName().isBlank()) currentItem.setName(item.getName());
-        if (item.getDescription() != null && !item.getDescription().isBlank()) currentItem.setDescription(item.getDescription());
-        currentItem.setAvailable(item.isAvailable());
+        if (item.getName() != null && !item.getName().isBlank()) {
+            if (item.getDescription() != null && !item.getDescription().isBlank()) {
+                currentItem.setName(item.getName());
+                currentItem.setDescription(item.getDescription());
+                currentItem.setAvailable(item.isAvailable());
+            } else {
+                currentItem.setName(item.getName());
+            }
+        } else if (item.getDescription() != null && !item.getDescription().isBlank()) {
+            currentItem.setDescription(item.getDescription());
+        } else {
+            currentItem.setAvailable(item.isAvailable());
+        }
         return currentItem;
     }
 
