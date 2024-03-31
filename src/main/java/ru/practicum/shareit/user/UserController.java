@@ -8,7 +8,6 @@ import ru.practicum.shareit.exceptionControllers.Marker;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.userDto.UserDto;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -20,15 +19,14 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    @Validated({Marker.OnCreate.class})
-    public UserDto createUser(@Valid @RequestBody UserDto userDto) {
+    public UserDto createUser(@Validated({Marker.OnCreate.class}) @RequestBody UserDto userDto) {
         log.info("Выполняется запрос на создание пользователя");
         return userService.create(userDto);
     }
 
     @PatchMapping("/{id}")
-    @Validated({Marker.OnUpdate.class})
-    public UserDto updateUser(@PathVariable long id, @Valid @RequestBody UserDto userDto) {
+    public UserDto updateUser(@PathVariable long id,
+                              @Validated({Marker.OnUpdate.class}) @RequestBody UserDto userDto) {
         log.info("Выполниется запрос обновления пользователя под ID: {}", id);
         return userService.patch(id, userDto);
     }

@@ -31,12 +31,10 @@ public class UserRepositoryImpl implements UserRepository {
         User currentUserByUpdate = getUserById(id);
         String updateName = user.getName();
         String updateEmail = user.getEmail();
-        if (updateName != null && updateEmail != null) {
+        if (updateName != null && !updateName.isBlank()) {
             currentUserByUpdate.setName(updateName);
-            currentUserByUpdate.setEmail(updateEmail);
-        } else if (updateName != null && !updateName.isBlank()) {
-            currentUserByUpdate.setName(updateName);
-        } else if (updateEmail != null && !updateEmail.isBlank()) {
+        }
+        if (updateEmail != null && !updateEmail.isBlank()) {
             currentUserByUpdate.setEmail(updateEmail);
         }
         return currentUserByUpdate;

@@ -4,10 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.exceptionControllers.Marker;
-import ru.practicum.shareit.request.ItemRequest;
 
-import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 
@@ -21,7 +20,6 @@ public class ItemDto {
     private String name;
     @NotBlank(groups = Marker.OnCreate.class)
     private String description;
-    @AssertTrue(groups = Marker.OnCreate.class)
-    private boolean available;
-    private ItemRequest request;
+    @NotNull(groups = Marker.OnCreate.class)
+    private Boolean available;
 }

@@ -8,7 +8,6 @@ import ru.practicum.shareit.exceptionControllers.Marker;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 import static ru.practicum.shareit.constans.Constants.REQUEST_HEADER_NAME;
@@ -24,8 +23,8 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    @Validated(Marker.OnCreate.class)
-    public ItemDto createItem(@RequestHeader(REQUEST_HEADER_NAME) long userId, @Valid @RequestBody ItemDto item) {
+    public ItemDto createItem(@RequestHeader(REQUEST_HEADER_NAME) long userId,
+                              @Validated(Marker.OnCreate.class) @RequestBody ItemDto item) {
         log.info("Выполняется запрос создания вещи");
         return itemService.createItem(userId, item);
     }

@@ -13,8 +13,7 @@ import javax.validation.constraints.NotBlank;
 public class UserDto {
     private long id;
     @NotBlank(groups = Marker.OnCreate.class)
-    @Email(groups = Marker.OnCreate.class)
-    @Email(groups = Marker.OnUpdate.class)
+    @Email(groups = {Marker.OnCreate.class, Marker.OnCreate.class})
     private String email;
     @NotBlank(groups = Marker.OnCreate.class)
     private String name;

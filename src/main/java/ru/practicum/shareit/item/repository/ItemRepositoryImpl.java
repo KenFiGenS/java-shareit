@@ -41,24 +41,20 @@ public class ItemRepositoryImpl implements ItemRepository {
         if (currentItemList == null) {
             throw new DataNotFound("Список вещей данного позьзователя пуст");
         }
-        Item currentItem = itemsByUserId.get(userId).stream()
+        Item currentItem = currentItemList.stream()
                 .filter(i -> i.getId() == id)
                 .findFirst()
                 .orElseThrow((Supplier<Throwable>) () ->
                         new DataNotFound("У данного пользователя нет вещи под ID: " + id));
         item.setId(currentItem.getId());
         if (item.getName() != null && !item.getName().isBlank()) {
-            if (item.getDescription() != null && !item.getDescription().isBlank()) {
-                currentItem.setName(item.getName());
-                currentItem.setDescription(item.getDescription());
-                currentItem.setAvailable(item.isAvailable());
-            } else {
-                currentItem.setName(item.getName());
-            }
-        } else if (item.getDescription() != null && !item.getDescription().isBlank()) {
+            currentItem.setName(item.getName());
+        }
+        if (item.getDescription() != null && !item.getDescription().isBlank()) {
             currentItem.setDescription(item.getDescription());
-        } else {
-            currentItem.setAvailable(item.isAvailable());
+        }
+        if (item.getAvailable() != null) {
+            currentItem.setAvailable(item.getAvailable());
         }
         return currentItem;
     }
@@ -75,13 +71,12 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public List<Item> search(String text) {
-        List<Item> items = this.itemsByUserId.values().stream()
+        return this.itemsByUserId.values().stream()
                 .flatMap(List::stream)
                 .filter(item -> (item.getName().toLowerCase().contains(text) ||
                         item.getDescription().toLowerCase().contains(text)))
-                .filter(item -> item.isAvailable())
+                .filter(Item::getAvailable)
                 .collect(Collectors.toList());
-        return items;
     }
 
 
