@@ -20,20 +20,22 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto create(UserDto userDto) {
         emailExist(0, userDto);
-        return UserMapper.touserDto(userRepository.create(UserMapper.toUser(userDto)));
+        return UserMapper.touserDto(userRepository.save(UserMapper.toUser(userDto)));
     }
 
     @Override
     public UserDto patch(long id, UserDto userDto) {
-        getUserById(id);
+        UserDto userForUpdate = getUserById(id);
         emailExist(id, userDto);
-        return UserMapper.touserDto(userRepository.patch(id, UserMapper.toUser(userDto)));
+        if (userDto.getEmail() != null && !userDto.getEmail().isBlank()) userForUpdate.setEmail(userDto.getEmail());
+        if (userDto.getName() != null && !userDto.getName().isBlank())userForUpdate.setName(userDto.getName());
+        return UserMapper.touserDto(userRepository.save(UserMapper.toUser(userForUpdate)));
     }
 
     @SneakyThrows
     @Override
     public UserDto getUserById(long id) {
-        User currentUser = userRepository.getUserById(id);
+        User currentUser = userRepository.getReferenceById(id);
         if (currentUser == null) {
             throw new DataNotFound("Пользователь c ID: " + id + " не найден!");
         }
@@ -42,18 +44,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getAllUsers() {
-        return userRepository.getAllUsers().stream()
+        return userRepository.findAll().stream()
                 .map(UserMapper::touserDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public void removeUser(long id) {
-        userRepository.removeUser(id);
+        userRepository.deleteById(id);
     }
 
     private void emailExist(long id, UserDto user) {
-        userRepository.getAllUsers()
+        userRepository.findAll()
                 .forEach(u -> {
                     if (u.getEmail().equals(user.getEmail()) && u.getId() != id)
                         throw new IllegalArgumentException("Данный email уже существует");

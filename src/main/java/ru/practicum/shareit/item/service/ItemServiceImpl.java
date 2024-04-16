@@ -25,7 +25,8 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto createItem(long userId, ItemDto itemDto) {
         User cuttentUser = UserMapper.toUser(userService.getUserById(userId));
         Item item = ItemMapper.toItem(itemDto, cuttentUser);
-        Item itemAfterCreate = itemRepository.createItem(userId, item);
+        item.setOwner(cuttentUser);
+        Item itemAfterCreate = itemRepository.save(item);
         return ItemMapper.toItemDto(itemAfterCreate);
     }
 
@@ -33,30 +34,30 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto updateItem(long userId, long id, ItemDto itemDto) {
         Item item = ItemMapper.toItem(itemDto, UserMapper.toUser(userService.getUserById(userId)));
-        Item itemAfterUpdate = itemRepository.updateItem(userId, id, item);
+        Item itemAfterUpdate = itemRepository.save(item);
         return ItemMapper.toItemDto(itemAfterUpdate);
     }
 
     @Override
     public ItemDto getItemById(long userId, long id) {
-        return ItemMapper.toItemDto(itemRepository.getItemById(userId, id));
+        return ItemMapper.toItemDto(itemRepository.getReferenceById(id));
     }
 
     @Override
     public List<ItemDto> getAllItemByOwner(long userId) {
-        List<Item> itemsByUser = itemRepository.getAllItemByUser(userId);
+        List<Item> itemsByUser = itemRepository.findItemByOwnerId(userId);
         return itemsByUser.stream().map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public List<ItemDto> search(String text) {
-        if (text.isBlank()) {
-            return List.of();
-        }
-        text = text.toLowerCase();
-        List<Item> itemsBySearch = itemRepository.search(text);
-        return itemsBySearch.stream().map(ItemMapper::toItemDto)
-                .collect(Collectors.toList());
-    }
+//    @Override
+//    public List<ItemDto> search(String text) {
+//        if (text.isBlank()) {
+//            return List.of();
+//        }
+//        text = text.toLowerCase();
+//        List<Item> itemsBySearch = itemRepository.findItemByNameAndDescription(text);
+//        return itemsBySearch.stream().map(ItemMapper::toItemDto)
+//                .collect(Collectors.toList());
+//    }
 }

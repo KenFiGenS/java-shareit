@@ -49,9 +49,9 @@ public class ItemController {
         return itemService.getAllItemByOwner(userId);
     }
 
-    @GetMapping("/search")
-    public List<ItemDto> searchByNameAndDescription(@RequestParam String text) {
-        log.info("Выполняется запрос поиска по имени и описанию. Текст запроса: {}", text);
-        return itemService.search(text);
-    }
+//    @GetMapping("/search")
+//    public List<ItemDto> searchByNameAndDescription(@RequestParam String text) {
+//        log.info("Выполняется запрос поиска по имени и описанию. Текст запроса: {}", text);
+//        return itemService.search(text);
+//    }
 }
