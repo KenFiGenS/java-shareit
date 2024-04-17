@@ -7,8 +7,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolationException;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 
@@ -52,9 +55,9 @@ public class ErrorHandlingControllerAdvice {
         return new Violation(e.getClass().toString(), e.getMessage());
     }
 
-    @ExceptionHandler(DataNotFound.class)
+    @ExceptionHandler({EntityNotFoundException.class, DataNotFound.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Violation onServiceArgumentNotValidException(DataNotFound e) {
+    public Violation onServiceArgumentNotValidException(RuntimeException e) {
         log.debug("Получен статус 404 Not Found {}", e.getMessage(), e);
         return new Violation(e.getClass().toString(), e.getMessage());
     }

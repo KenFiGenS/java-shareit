@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.exceptionControllers.Marker;
+import ru.practicum.shareit.request.ItemRequest;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -22,4 +23,5 @@ public class ItemDto {
     private String description;
     @NotNull(groups = Marker.OnCreate.class)
     private Boolean available;
+//    private ItemRequest request;
 }

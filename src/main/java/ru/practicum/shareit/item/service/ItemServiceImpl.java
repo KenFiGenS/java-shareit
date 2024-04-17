@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.service;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exceptionControllers.DataNotFound;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
@@ -33,8 +34,14 @@ public class ItemServiceImpl implements ItemService {
     @SneakyThrows
     @Override
     public ItemDto updateItem(long userId, long id, ItemDto itemDto) {
-        Item item = ItemMapper.toItem(itemDto, UserMapper.toUser(userService.getUserById(userId)));
-        Item itemAfterUpdate = itemRepository.save(item);
+        Item itemForUpdate = itemRepository.getReferenceById(id);
+        if (itemForUpdate.getOwner().getId() != userId) {
+            throw new DataNotFound("У данного пользователя нет вещи под ID: " + id);
+        }
+        if (itemDto.getName() != null && !itemDto.getName().isBlank()) itemForUpdate.setName(itemDto.getName());
+        if (itemDto.getDescription() != null && !itemDto.getDescription().isBlank()) itemForUpdate.setDescription(itemDto.getDescription());
+        if (itemDto.getAvailable() != null) itemForUpdate.setAvailable(itemDto.getAvailable());
+        Item itemAfterUpdate = itemRepository.save(itemForUpdate);
         return ItemMapper.toItemDto(itemAfterUpdate);
     }
 
@@ -50,14 +57,18 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.toList());
     }
 
-//    @Override
-//    public List<ItemDto> search(String text) {
-//        if (text.isBlank()) {
-//            return List.of();
-//        }
-//        text = text.toLowerCase();
-//        List<Item> itemsBySearch = itemRepository.findItemByNameAndDescription(text);
-//        return itemsBySearch.stream().map(ItemMapper::toItemDto)
-//                .collect(Collectors.toList());
-//    }
+    @Override
+    public List<ItemDto> search(String text) {
+        if (text.isBlank()) {
+            return List.of();
+        }
+        List<Item> itemsByName = itemRepository.findItemByNameContainingIgnoreCase(text);
+        List<Item> itemsByDescription = itemRepository.findItemByDescriptionContainingIgnoreCase(text);
+        itemsByName.addAll(itemsByDescription);
+        return itemsByName.stream()
+                .map(ItemMapper::toItemDto)
+                .filter(ItemDto::getAvailable)
+                .distinct()
+                .collect(Collectors.toList());
+    }
 }

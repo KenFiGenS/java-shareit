@@ -1,7 +1,9 @@
 package ru.practicum.shareit.item.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 
@@ -9,6 +11,7 @@ import javax.persistence.*;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "ITEMS")
 public class Item {
@@ -22,7 +25,7 @@ public class Item {
     @ManyToOne
     @JoinColumn(name = "USER_ID")
     private User owner;
-    @OneToOne
-    @JoinColumn(name = "REQUEST_ID")
-    private ItemRequest request;
+//    @ManyToOne
+//    @JoinColumn(name = "ITEM_REQUEST_ID")
+//    private ItemRequest request;
 }
