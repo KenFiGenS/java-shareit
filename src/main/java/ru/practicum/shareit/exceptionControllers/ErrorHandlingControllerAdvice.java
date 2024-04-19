@@ -49,7 +49,7 @@ public class ErrorHandlingControllerAdvice {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Violation onServiceArgumentNotValidException(IllegalArgumentException e) {
         log.debug("Получен статус 400 Conflict {}", e.getMessage(), e);
         return new Violation(e.getClass().toString(), e.getMessage());

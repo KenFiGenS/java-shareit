@@ -19,14 +19,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto create(UserDto userDto) {
-        emailExist(0, userDto);
         return UserMapper.touserDto(userRepository.save(UserMapper.toUser(userDto)));
     }
 
     @Override
     public UserDto patch(long id, UserDto userDto) {
         UserDto userForUpdate = getUserById(id);
-        emailExist(id, userDto);
         if (userDto.getEmail() != null && !userDto.getEmail().isBlank()) userForUpdate.setEmail(userDto.getEmail());
         if (userDto.getName() != null && !userDto.getName().isBlank())userForUpdate.setName(userDto.getName());
         return UserMapper.touserDto(userRepository.save(UserMapper.toUser(userForUpdate)));
@@ -54,11 +52,11 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);
     }
 
-    private void emailExist(long id, UserDto user) {
-        userRepository.findAll()
-                .forEach(u -> {
-                    if (u.getEmail().equals(user.getEmail()) && u.getId() != id)
-                        throw new IllegalArgumentException("Данный email уже существует");
-                });
-    }
+//    private void emailExist(long id, UserDto user) {
+//        userRepository.findAll()
+//                .forEach(u -> {
+//                    if (u.getEmail().equals(user.getEmail()) && u.getId() != id)
+//                        throw new IllegalArgumentException("Данный email уже существует");
+//                });
+//    }
 }

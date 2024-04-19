@@ -1,12 +1,24 @@
 package ru.practicum.shareit.booking;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.AllArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingDtoCreate;
+import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.exceptionControllers.Marker;
 
-/**
- * TODO Sprint add-bookings.
- */
+import static ru.practicum.shareit.constans.Constants.REQUEST_HEADER_NAME;
+
 @RestController
 @RequestMapping(path = "/bookings")
+@AllArgsConstructor
 public class BookingController {
+    private BookingService bookingService;
+
+    @PostMapping
+    public BookingDto createBooking(@RequestHeader(REQUEST_HEADER_NAME) long userId,
+                                    @Validated({Marker.OnCreate.class}) @RequestBody BookingDtoCreate bookingDto) {
+        return bookingService.createBooking(userId, bookingDto);
+    }
 }

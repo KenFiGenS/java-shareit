@@ -62,10 +62,8 @@ public class ItemServiceImpl implements ItemService {
         if (text.isBlank()) {
             return List.of();
         }
-        List<Item> itemsByName = itemRepository.findItemByNameContainingIgnoreCase(text);
-        List<Item> itemsByDescription = itemRepository.findItemByDescriptionContainingIgnoreCase(text);
-        itemsByName.addAll(itemsByDescription);
-        return itemsByName.stream()
+        List<Item> items = itemRepository.searchByNameAndDescription(text);
+        return items.stream()
                 .map(ItemMapper::toItemDto)
                 .filter(ItemDto::getAvailable)
                 .distinct()
