@@ -44,4 +44,10 @@ public class BookingController {
                                                    @RequestParam(defaultValue = "ALL") String state) {
         return bookingService.getAllBookingsByBooker(userId, state);
     }
+
+    @GetMapping("/owner")
+    public List<BookingDto> getAllBookingByOwner(@RequestHeader(REQUEST_HEADER_NAME) long userId,
+                                                 @RequestParam(defaultValue = "ALL") String state) {
+        return bookingService.getAllBookingsByOwner(userId, state);
+    }
 }
