@@ -38,9 +38,9 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
-    public ItemDto getItemById(@RequestHeader(REQUEST_HEADER_NAME) long userId, @PathVariable long id) {
-        log.info("Выполняется запрос получения информации вещи по ID: {} от пользователя под ID: {}", id, userId);
-        return itemService.getItemById(userId, id);
+    public ItemDto getItemById(@PathVariable long id) {
+        log.info("Выполняется запрос получения информации вещи по ID: {}", id);
+        return itemService.getItemById(id);
     }
 
     @GetMapping

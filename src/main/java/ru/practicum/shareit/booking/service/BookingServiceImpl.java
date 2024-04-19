@@ -8,11 +8,18 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoCreate;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.exceptionControllers.DataNotFound;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.userDto.UserMapper;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -27,8 +34,17 @@ public class BookingServiceImpl implements BookingService{
                 bookingDto.getStart().equals(bookingDto.getEnd())) {
             throw new IllegalArgumentException("Неверно заданы временные промежутки использования вещи");
         }
+        List<Booking> allBookingByCurrentItemId = bookingRepository.findByItemId(bookingDto.getItemId());
+        allBookingByCurrentItemId
+                .forEach(b -> {
+                    if (bookingDto.getStart().isAfter(b.getStart()) && bookingDto.getStart().isBefore(b.getEnd()))
+                        throw new IllegalArgumentException("Имеется бронирование на данный промежуток времени");
+                });
         User currentUser = UserMapper.toUser(userService.getUserById(userId));
         Item currentItem = itemRepository.getReferenceById(bookingDto.getItemId());
+        if (currentItem.getOwner().getId() == userId) {
+            throw new DataNotFound("Нельзя забронировать свою же вещь");
+        }
         if (!currentItem.getAvailable()) {
             throw new IllegalArgumentException("Вещь недоступна для бронирования");
         }
@@ -37,17 +53,68 @@ public class BookingServiceImpl implements BookingService{
     }
 
     @Override
+    public BookingDto confirmationBooking(long userId, long bookingId, boolean approved) {
+        Booking currentBooking = bookingRepository.getReferenceById(bookingId);
+        Item currentItem = currentBooking.getItem();
+        if (currentItem.getOwner().getId() != userId) {
+            throw new IllegalArgumentException("Вещь не принадлежит пользователю");
+        }
+        if (approved) {
+            currentBooking.setStatus(BookingStatus.APPROVED);
+            bookingRepository.save(currentBooking);
+        } else {
+            currentBooking.setStatus(BookingStatus.REJECTED);
+        }
+        return BookingMapper.toBookingDto(currentBooking);
+    }
+
+    @Override
     public BookingDto updateBooking(BookingDto bookingDto) {
+
         return null;
     }
 
     @Override
-    public BookingDto getBookingById(long id) {
-        return null;
+    public BookingDto getBookingById(long userId, long bookingId) {
+        Booking currentBooking = bookingRepository.getReferenceById(bookingId);
+        Item currentItem = currentBooking.getItem();
+        if (currentItem.getOwner().getId() != userId && currentBooking.getBooker().getId() != userId) {
+            throw new IllegalArgumentException("Текущее бронирование и вещь не принадлежит пользователю");
+        }
+        return BookingMapper.toBookingDto(currentBooking);
+    }
+
+    @Override
+    public List<BookingDto> getAllBookingsByBooker(long userId, String state) {
+        System.out.println(state);
+        userService.getUserById(userId);
+        LocalDateTime currentTime = LocalDateTime.now();
+        List<Booking> currentBookingList;
+        if (state.equals("ALL")) {
+            currentBookingList = bookingRepository.findByBookerId(userId);
+        } else if (state.equals("CURRENT")) {
+            currentBookingList = bookingRepository.findByBookerIdAndStartIsBeforeAndEndIsAfter(
+                    userId,
+                    currentTime,
+                    currentTime);
+        } else if (state.equals("FUTURE")) {
+            currentBookingList = bookingRepository.findByBookerIdAndStartIsAfter(userId, currentTime);
+        } else if (state.equals("**PAST**")) {
+            currentBookingList = bookingRepository.findByBookerIdAndEndIsBefore(userId, currentTime);
+        } else {
+            throw new IllegalArgumentException("Unknown state: " + state);
+        }
+        return currentBookingList.stream()
+                .sorted(Comparator.comparing(Booking::getStart).reversed())
+                .map(BookingMapper::toBookingDto)
+                .collect(Collectors.toList());
     }
 
     @Override
     public BookingDto getAllBooking() {
+
         return null;
     }
+
+
 }
