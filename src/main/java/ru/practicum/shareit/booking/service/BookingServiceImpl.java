@@ -65,7 +65,7 @@ public class BookingServiceImpl implements BookingService{
         if (currentItem.getOwner().getId() != userId) {
             throw new IllegalArgumentException("Вещь не принадлежит пользователю");
         }
-        if (approved ) {
+        if (approved) {
             if (currentBooking.getStatus().equals(BookingStatus.APPROVED)) {
                 throw  new IllegalArgumentException("Бронирование уже одобренно");
             } else {
@@ -74,6 +74,7 @@ public class BookingServiceImpl implements BookingService{
             }
         } else {
             currentBooking.setStatus(BookingStatus.REJECTED);
+            bookingRepository.save(currentBooking);
         }
         return BookingMapper.toBookingDto(currentBooking);
     }
@@ -111,7 +112,7 @@ public class BookingServiceImpl implements BookingService{
         } else if (state.equals("**PAST**")) {
             currentBookingList = bookingRepository.findByBookerIdAndEndIsBefore(userId, currentTime);
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown state: " + state);
+            currentBookingList = bookingRepository.findByBookerIdAndStatus(userId, BookingStatus.valueOf(state));
         }
         return currentBookingList.stream()
                 .sorted(Comparator.comparing(Booking::getStart).reversed())
@@ -136,7 +137,7 @@ public class BookingServiceImpl implements BookingService{
         } else if (state.equals("**PAST**")) {
             currentBookingList = bookingRepository.findByItemOwnerIdAndEndIsBefore(userId, currentTime);
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown state: " + state);
+            currentBookingList = bookingRepository.findByItemOwnerIdAndStatus(userId, BookingStatus.valueOf(state));
         }
         return currentBookingList.stream()
                 .sorted(Comparator.comparing(Booking::getStart).reversed())

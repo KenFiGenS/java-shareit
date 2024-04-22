@@ -6,6 +6,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exceptionControllers.Marker;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemDtoWithBooking;
 import ru.practicum.shareit.item.service.ItemService;
 
 import java.util.List;
@@ -37,14 +38,15 @@ public class ItemController {
         return itemService.updateItem(userId, id, item);
     }
 
-    @GetMapping("/{id}")
-    public ItemDto getItemById(@PathVariable long id) {
-        log.info("Выполняется запрос получения информации вещи по ID: {}", id);
-        return itemService.getItemById(id);
+    @GetMapping("/{itemId}")
+    public ItemDtoWithBooking getItemById(@RequestHeader(REQUEST_HEADER_NAME) long userId,
+                                          @PathVariable long itemId) {
+        log.info("Выполняется запрос получения информации вещи по ID: {}, от пользователя: {}", itemId, userId);
+        return itemService.getItemById(userId, itemId);
     }
 
     @GetMapping
-    public List<ItemDto> getAllItemByOwner(@RequestHeader(REQUEST_HEADER_NAME) long userId) {
+    public List<ItemDtoWithBooking> getAllItemByOwner(@RequestHeader(REQUEST_HEADER_NAME) long userId) {
         log.info("Выполняется запрос получения всех вещей пользователя под ID: {}", userId);
         return itemService.getAllItemByOwner(userId);
     }
