@@ -1,4 +1,4 @@
-package ru.practicum.shareit.exceptionControllers;
+package ru.practicum.shareit.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -6,7 +6,5 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public class Violation {
-
     private final String error;
-
 }

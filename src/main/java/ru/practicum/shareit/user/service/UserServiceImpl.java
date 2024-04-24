@@ -3,8 +3,8 @@ package ru.practicum.shareit.user.service;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exceptionControllers.DataNotFound;
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.exception.DataNotFound;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.userDto.UserDto;
 import ru.practicum.shareit.user.userDto.UserMapper;
@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
     public UserDto patch(long id, UserDto userDto) {
         UserDto userForUpdate = getUserById(id);
         if (userDto.getEmail() != null && !userDto.getEmail().isBlank()) userForUpdate.setEmail(userDto.getEmail());
-        if (userDto.getName() != null && !userDto.getName().isBlank())userForUpdate.setName(userDto.getName());
+        if (userDto.getName() != null && !userDto.getName().isBlank()) userForUpdate.setName(userDto.getName());
         return UserMapper.touserDto(userRepository.save(UserMapper.toUser(userForUpdate)));
     }
 

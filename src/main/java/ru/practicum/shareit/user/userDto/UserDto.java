@@ -3,7 +3,7 @@ package ru.practicum.shareit.user.userDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import ru.practicum.shareit.exceptionControllers.Marker;
+import ru.practicum.shareit.exception.Marker;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;

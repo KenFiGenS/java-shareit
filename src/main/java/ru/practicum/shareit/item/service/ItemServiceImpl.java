@@ -3,29 +3,25 @@ package ru.practicum.shareit.item.service;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.booking.Booking;
-import ru.practicum.shareit.booking.BookingStatus;
-import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoItemById;
 import ru.practicum.shareit.booking.dto.BookingMapper;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.comment.dto.CommentMapper;
-import ru.practicum.shareit.comment.model.Comment;
 import ru.practicum.shareit.comment.repository.CommentRepository;
-import ru.practicum.shareit.exceptionControllers.DataNotFound;
+import ru.practicum.shareit.exception.DataNotFound;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemDtoWithBooking;
 import ru.practicum.shareit.item.dto.ItemDtoWithBookingAndComments;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.userDto.UserMapper;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,7 +52,8 @@ public class ItemServiceImpl implements ItemService {
             throw new DataNotFound("У данного пользователя нет вещи под ID: " + id);
         }
         if (itemDto.getName() != null && !itemDto.getName().isBlank()) itemForUpdate.setName(itemDto.getName());
-        if (itemDto.getDescription() != null && !itemDto.getDescription().isBlank()) itemForUpdate.setDescription(itemDto.getDescription());
+        if (itemDto.getDescription() != null && !itemDto.getDescription().isBlank())
+            itemForUpdate.setDescription(itemDto.getDescription());
         if (itemDto.getAvailable() != null) itemForUpdate.setAvailable(itemDto.getAvailable());
         Item itemAfterUpdate = itemRepository.save(itemForUpdate);
         return ItemMapper.toItemDto(itemAfterUpdate);
@@ -88,7 +85,7 @@ public class ItemServiceImpl implements ItemService {
         BookingDtoItemById lastBookingDto = null;
         BookingDtoItemById nextBookingDto = null;
         if (lastBooking != null && !lastBooking.getStatus().equals(BookingStatus.REJECTED)) {
-            lastBookingDto =  BookingMapper.bookingDtoItemByIdDtoItem(lastBooking);
+            lastBookingDto = BookingMapper.bookingDtoItemByIdDtoItem(lastBooking);
         }
         if (nextBooking != null && !nextBooking.getStatus().equals(BookingStatus.REJECTED)) {
             nextBookingDto = BookingMapper.bookingDtoItemByIdDtoItem(nextBooking);

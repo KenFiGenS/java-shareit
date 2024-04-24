@@ -2,14 +2,11 @@ package ru.practicum.shareit.request;
 
 import lombok.Builder;
 import lombok.Data;
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-/**
- * TODO Sprint add-item-requests.
- */
 @Data
 @Builder
 @Entity

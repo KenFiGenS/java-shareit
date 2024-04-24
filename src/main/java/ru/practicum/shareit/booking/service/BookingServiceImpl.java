@@ -3,17 +3,17 @@ package ru.practicum.shareit.booking.service;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.booking.Booking;
-import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoCreate;
 import ru.practicum.shareit.booking.dto.BookingMapper;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
-import ru.practicum.shareit.exceptionControllers.DataNotFound;
-import ru.practicum.shareit.exceptionControllers.NotFoundBookingStatusException;
+import ru.practicum.shareit.exception.DataNotFound;
+import ru.practicum.shareit.exception.NotFoundBookingStatusException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.userDto.UserMapper;
 
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class BookingServiceImpl implements BookingService{
+public class BookingServiceImpl implements BookingService {
     private BookingRepository bookingRepository;
     private ItemRepository itemRepository;
     private UserService userService;
@@ -66,7 +66,7 @@ public class BookingServiceImpl implements BookingService{
         }
         if (approved) {
             if (currentBooking.getStatus().equals(BookingStatus.APPROVED)) {
-                throw  new IllegalArgumentException("Бронирование уже одобренно");
+                throw new IllegalArgumentException("Бронирование уже одобренно");
             } else {
                 currentBooking.setStatus(BookingStatus.APPROVED);
                 bookingRepository.save(currentBooking);
