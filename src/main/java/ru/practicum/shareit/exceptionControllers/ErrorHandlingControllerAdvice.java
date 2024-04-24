@@ -2,6 +2,7 @@ package ru.practicum.shareit.exceptionControllers;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -9,9 +10,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolationException;
-import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 
@@ -24,13 +24,10 @@ public class ErrorHandlingControllerAdvice {
     public ValidationErrorResponse onConstraintValidationException(
             ConstraintViolationException e
     ) {
-        log.debug("Получен статус 409 Bad Request {}", e.getMessage(), e);
+        log.info("Получен статус 409 Bad Request {}", e.getMessage(), e);
         final List<Violation> violations = e.getConstraintViolations().stream()
                 .map(
-                        violation -> new Violation(
-                                violation.getPropertyPath().toString(),
-                                violation.getMessage()
-                        )
+                        violation -> new Violation(violation.getMessage())
                 )
                 .collect(Collectors.toList());
         return new ValidationErrorResponse(violations);
@@ -41,9 +38,9 @@ public class ErrorHandlingControllerAdvice {
     public ValidationErrorResponse onMethodArgumentNotValidException(
             MethodArgumentNotValidException e
     ) {
-        log.debug("Получен статус 409 Bad Request {}", e.getMessage(), e);
+        log.info("Получен статус 409 Bad Request {}", e.getMessage(), e);
         final List<Violation> violations = e.getBindingResult().getFieldErrors().stream()
-                .map(error -> new Violation(error.getField(), error.getDefaultMessage()))
+                .map(error -> new Violation(error.getDefaultMessage()))
                 .collect(Collectors.toList());
         return new ValidationErrorResponse(violations);
     }
@@ -51,21 +48,27 @@ public class ErrorHandlingControllerAdvice {
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Violation onServiceArgumentNotValidException(IllegalArgumentException e) {
-        log.debug("Получен статус 400 Conflict {}", e.getMessage(), e);
-        return new Violation(e.getClass().toString(), e.getMessage());
+        log.info("Получен статус 400 Conflict {}", e.getMessage(), e);
+        return new Violation(e.getMessage());
     }
 
     @ExceptionHandler({EntityNotFoundException.class, DataNotFound.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Violation onServiceArgumentNotValidException(RuntimeException e) {
-        log.debug("Получен статус 404 Not Found {}", e.getMessage(), e);
-        return new Violation(e.getClass().toString(), e.getMessage());
+        log.info("Получен статус 404 Not Found {}", e.getMessage(), e);
+        return new Violation(e.getMessage());
     }
 
-    @ExceptionHandler(Throwable.class)
+    @ExceptionHandler(NotFoundBookingStatusException.class)
+    public ResponseEntity<Violation> bookingStatusNotFound(NotFoundBookingStatusException e) {
+        log.info("Запращиваемый BookingStatus не найден. Ошибка: {}", e.getMessage(), e);
+        return new ResponseEntity<>(new Violation(e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public Violation onOthersException(Throwable e) {
-        log.debug("Получен статус 500 Internal Server Error {}", e.getMessage(), e);
-        return new Violation(e.getClass().toString(), e.getMessage());
+    public Violation onOthersException(Exception e) {
+        log.info("Получен статус 500 Internal Server Error {}", e.getMessage(), e);
+        return new Violation(e.getMessage());
     }
 }

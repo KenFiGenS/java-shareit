@@ -4,13 +4,19 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoItemById;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.comment.dto.CommentDto;
+import ru.practicum.shareit.comment.dto.CommentMapper;
+import ru.practicum.shareit.comment.model.Comment;
+import ru.practicum.shareit.comment.repository.CommentRepository;
 import ru.practicum.shareit.exceptionControllers.DataNotFound;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoWithBooking;
+import ru.practicum.shareit.item.dto.ItemDtoWithBookingAndComments;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -19,6 +25,7 @@ import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.userDto.UserMapper;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,6 +36,7 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserService userService;
     private final BookingRepository bookingRepository;
+    private final CommentRepository commentRepository;
 
     @SneakyThrows
     @Override
@@ -55,11 +63,11 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDtoWithBooking getItemById(long userId, long id) {
+    public ItemDtoWithBookingAndComments getItemById(long userId, long id) {
         LocalDateTime currentTime = LocalDateTime.now();
         List<Booking> bookingsById = bookingRepository.findByItemId(id);
         List<Booking> bookingsInPast = bookingsById.stream()
-                .filter(booking -> booking.getEnd().isBefore(currentTime))
+                .filter(booking -> booking.getStart().isBefore(currentTime))
                 .sorted(Comparator.comparing(Booking::getEnd).reversed())
                 .collect(Collectors.toList());
         List<Booking> bookingsInFuture = bookingsById.stream()
@@ -79,22 +87,26 @@ public class ItemServiceImpl implements ItemService {
         }
         BookingDtoItemById lastBookingDto = null;
         BookingDtoItemById nextBookingDto = null;
-        if (lastBooking != null) {
+        if (lastBooking != null && !lastBooking.getStatus().equals(BookingStatus.REJECTED)) {
             lastBookingDto =  BookingMapper.bookingDtoItemByIdDtoItem(lastBooking);
         }
-        if (nextBooking != null) {
+        if (nextBooking != null && !nextBooking.getStatus().equals(BookingStatus.REJECTED)) {
             nextBookingDto = BookingMapper.bookingDtoItemByIdDtoItem(nextBooking);
         }
-        return ItemMapper.itemDtoWithBooking(currentItem,
+        List<CommentDto> comments = commentRepository.findAllByItemId(id).stream()
+                .map(CommentMapper::toCommentDto)
+                .collect(Collectors.toList());
+        return ItemMapper.itemDtoWithBookingAndComments(currentItem,
                 lastBookingDto,
-                nextBookingDto);
+                nextBookingDto,
+                comments);
     }
 
     @Override
-    public List<ItemDtoWithBooking> getAllItemByOwner(long userId) {
+    public List<ItemDtoWithBookingAndComments> getAllItemByOwner(long userId) {
         List<Item> itemsByOwner = itemRepository.findItemByOwnerId(userId);
         return itemsByOwner.stream().map(item -> getItemById(userId, item.getId()))
-                .sorted(Comparator.comparing(ItemDtoWithBooking::getId))
+                .sorted(Comparator.comparing(ItemDtoWithBookingAndComments::getId))
                 .collect(Collectors.toList());
     }
 
@@ -109,5 +121,17 @@ public class ItemServiceImpl implements ItemService {
                 .filter(ItemDto::getAvailable)
                 .distinct()
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public CommentDto createComment(long userId, long itemId, CommentDto commentDto) {
+        LocalDateTime currentTime = LocalDateTime.now();
+        User cuttentUser = UserMapper.toUser(userService.getUserById(userId));
+        Item item = itemRepository.getReferenceById(itemId);
+        List<Booking> bookingsByItemId = bookingRepository.findByBookerIdAndItemIdAndEndIsBefore(userId, itemId, currentTime);
+        if (bookingsByItemId == null || bookingsByItemId.isEmpty()) {
+            throw new IllegalArgumentException("Данный пользователь не брал вещь в аренду, либо аренда ещё не завершена");
+        }
+        return CommentMapper.toCommentDto(commentRepository.save(CommentMapper.toCommentForCreated(commentDto, item, cuttentUser)));
     }
 }
