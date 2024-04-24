@@ -51,12 +51,4 @@ public class UserServiceImpl implements UserService {
     public void removeUser(long id) {
         userRepository.deleteById(id);
     }
-
-//    private void emailExist(long id, UserDto user) {
-//        userRepository.findAll()
-//                .forEach(u -> {
-//                    if (u.getEmail().equals(user.getEmail()) && u.getId() != id)
-//                        throw new IllegalArgumentException("Данный email уже существует");
-//                });
-//    }
 }

@@ -14,7 +14,7 @@ public class ItemDtoWithBookingAndComments {
     private String name;
     private String description;
     private Boolean available;
-    BookingDtoItemById lastBooking;
-    BookingDtoItemById nextBooking;
-    List<CommentDto> comments;
+    private BookingDtoItemById lastBooking;
+    private BookingDtoItemById nextBooking;
+    private List<CommentDto> comments;
 }

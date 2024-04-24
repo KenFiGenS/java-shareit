@@ -106,13 +106,10 @@ public class BookingServiceImpl implements BookingService {
         } else if (state.equals("PAST")) {
             currentBookingList = bookingRepository.findByBookerIdAndEndIsBefore(userId, currentTime);
         } else {
-            if (BookingStatus.WAITING.toString().equals(state) ||
-                    BookingStatus.APPROVED.toString().equals(state) ||
-                    BookingStatus.REJECTED.toString().equals(state) ||
-                    BookingStatus.CANCELED.toString().equals(state)) {
+            if (BookingStatus.isInEnum(state, BookingStatus.class)) {
                 currentBookingList = bookingRepository.findByBookerIdAndStatus(userId, BookingStatus.valueOf(state));
             } else {
-                throw new NotFoundBookingStatusException("Unknown state: UNSUPPORTED_STATUS");
+                throw new NotFoundBookingStatusException("Unknown state: " + state);
             }
 
         }
@@ -140,13 +137,10 @@ public class BookingServiceImpl implements BookingService {
         } else if (state.equals("PAST")) {
             currentBookingList = bookingRepository.findByItemOwnerIdAndEndIsBefore(userId, currentTime);
         } else {
-            if (BookingStatus.WAITING.toString().equals(state) ||
-                    BookingStatus.APPROVED.toString().equals(state) ||
-                    BookingStatus.REJECTED.toString().equals(state) ||
-                    BookingStatus.CANCELED.toString().equals(state)) {
+            if (BookingStatus.isInEnum(state, BookingStatus.class)) {
                 currentBookingList = bookingRepository.findByItemOwnerIdAndStatus(userId, BookingStatus.valueOf(state));
             } else {
-                throw new NotFoundBookingStatusException("Unknown state: UNSUPPORTED_STATUS");
+                throw new NotFoundBookingStatusException("Unknown state: " + state);
             }
         }
         return currentBookingList.stream()
