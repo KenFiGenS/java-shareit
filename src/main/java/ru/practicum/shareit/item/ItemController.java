@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.exceptionControllers.Marker;
+import ru.practicum.shareit.comment.dto.CommentDto;
+import ru.practicum.shareit.exception.Marker;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemDtoWithBookingAndComments;
 import ru.practicum.shareit.item.service.ItemService;
 
 import java.util.List;
@@ -37,14 +39,15 @@ public class ItemController {
         return itemService.updateItem(userId, id, item);
     }
 
-    @GetMapping("/{id}")
-    public ItemDto getItemById(@RequestHeader(REQUEST_HEADER_NAME) long userId, @PathVariable long id) {
-        log.info("Выполняется запрос получения информации вещи по ID: {} от пользователя под ID: {}", id, userId);
-        return itemService.getItemById(userId, id);
+    @GetMapping("/{itemId}")
+    public ItemDtoWithBookingAndComments getItemById(@RequestHeader(REQUEST_HEADER_NAME) long userId,
+                                                     @PathVariable long itemId) {
+        log.info("Выполняется запрос получения информации вещи по ID: {}, от пользователя: {}", itemId, userId);
+        return itemService.getItemById(userId, itemId);
     }
 
     @GetMapping
-    public List<ItemDto> getAllItemByOwner(@RequestHeader(REQUEST_HEADER_NAME) long userId) {
+    public List<ItemDtoWithBookingAndComments> getAllItemByOwner(@RequestHeader(REQUEST_HEADER_NAME) long userId) {
         log.info("Выполняется запрос получения всех вещей пользователя под ID: {}", userId);
         return itemService.getAllItemByOwner(userId);
     }
@@ -53,5 +56,13 @@ public class ItemController {
     public List<ItemDto> searchByNameAndDescription(@RequestParam String text) {
         log.info("Выполняется запрос поиска по имени и описанию. Текст запроса: {}", text);
         return itemService.search(text);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDto createComment(@RequestHeader(REQUEST_HEADER_NAME) long userId,
+                                    @PathVariable long itemId,
+                                    @Validated(Marker.OnCreate.class) @RequestBody CommentDto commentDto) {
+        log.info("Выполняется запрос создания отзыва для вещи под ID: {}, от пользователя: {}", itemId, userId);
+        return itemService.createComment(userId, itemId, commentDto);
     }
 }

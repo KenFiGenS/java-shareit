@@ -1,4 +1,4 @@
-package ru.practicum.shareit.exceptionControllers;
+package ru.practicum.shareit.exception;
 
 public interface Marker {
 

@@ -3,8 +3,8 @@ package ru.practicum.shareit.user.service;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exceptionControllers.DataNotFound;
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.exception.DataNotFound;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.userDto.UserDto;
 import ru.practicum.shareit.user.userDto.UserMapper;
@@ -19,21 +19,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto create(UserDto userDto) {
-        emailExist(0, userDto);
-        return UserMapper.touserDto(userRepository.create(UserMapper.toUser(userDto)));
+        return UserMapper.touserDto(userRepository.save(UserMapper.toUser(userDto)));
     }
 
     @Override
     public UserDto patch(long id, UserDto userDto) {
-        getUserById(id);
-        emailExist(id, userDto);
-        return UserMapper.touserDto(userRepository.patch(id, UserMapper.toUser(userDto)));
+        UserDto userForUpdate = getUserById(id);
+        if (userDto.getEmail() != null && !userDto.getEmail().isBlank()) userForUpdate.setEmail(userDto.getEmail());
+        if (userDto.getName() != null && !userDto.getName().isBlank()) userForUpdate.setName(userDto.getName());
+        return UserMapper.touserDto(userRepository.save(UserMapper.toUser(userForUpdate)));
     }
 
     @SneakyThrows
     @Override
     public UserDto getUserById(long id) {
-        User currentUser = userRepository.getUserById(id);
+        User currentUser = userRepository.getReferenceById(id);
         if (currentUser == null) {
             throw new DataNotFound("Пользователь c ID: " + id + " не найден!");
         }
@@ -42,21 +42,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getAllUsers() {
-        return userRepository.getAllUsers().stream()
+        return userRepository.findAll().stream()
                 .map(UserMapper::touserDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public void removeUser(long id) {
-        userRepository.removeUser(id);
-    }
-
-    private void emailExist(long id, UserDto user) {
-        userRepository.getAllUsers()
-                .forEach(u -> {
-                    if (u.getEmail().equals(user.getEmail()) && u.getId() != id)
-                        throw new IllegalArgumentException("Данный email уже существует");
-                });
+        userRepository.deleteById(id);
     }
 }
