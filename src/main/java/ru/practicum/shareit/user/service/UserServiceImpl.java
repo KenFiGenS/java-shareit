@@ -19,7 +19,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto create(UserDto userDto) {
-        return UserMapper.touserDto(userRepository.save(UserMapper.toUser(userDto)));
+        return UserMapper.toUserDto(userRepository.save(UserMapper.toUser(userDto)));
     }
 
     @Override
@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
         UserDto userForUpdate = getUserById(id);
         if (userDto.getEmail() != null && !userDto.getEmail().isBlank()) userForUpdate.setEmail(userDto.getEmail());
         if (userDto.getName() != null && !userDto.getName().isBlank()) userForUpdate.setName(userDto.getName());
-        return UserMapper.touserDto(userRepository.save(UserMapper.toUser(userForUpdate)));
+        return UserMapper.toUserDto(userRepository.save(UserMapper.toUser(userForUpdate)));
     }
 
     @SneakyThrows
@@ -37,18 +37,22 @@ public class UserServiceImpl implements UserService {
         if (currentUser == null) {
             throw new DataNotFound("Пользователь c ID: " + id + " не найден!");
         }
-        return UserMapper.touserDto(currentUser);
+        return UserMapper.toUserDto(currentUser);
     }
 
     @Override
     public List<UserDto> getAllUsers() {
         return userRepository.findAll().stream()
-                .map(UserMapper::touserDto)
+                .map(UserMapper::toUserDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public void removeUser(long id) {
+        User currentUser = userRepository.getReferenceById(id);
+        if (currentUser == null) {
+            throw new DataNotFound("Пользователь c ID: " + id + " не найден!");
+        }
         userRepository.deleteById(id);
     }
 }
