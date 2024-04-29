@@ -10,7 +10,6 @@ import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.comment.dto.CommentMapper;
-import ru.practicum.shareit.comment.model.Comment;
 import ru.practicum.shareit.comment.repository.CommentRepository;
 import ru.practicum.shareit.exception.DataNotFound;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -22,6 +21,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.userDto.UserMapper;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -37,6 +37,7 @@ public class ItemServiceImpl implements ItemService {
 
     @SneakyThrows
     @Override
+    @Transactional
     public ItemDto createItem(long userId, ItemDto itemDto) {
         User currentUser = UserMapper.toUser(userService.getUserById(userId));
         Item item = ItemMapper.toItem(itemDto, currentUser);
@@ -46,6 +47,7 @@ public class ItemServiceImpl implements ItemService {
 
     @SneakyThrows
     @Override
+    @Transactional
     public ItemDto updateItem(long userId, long id, ItemDto itemDto) {
         Item itemForUpdate = itemRepository.getReferenceById(id);
         if (itemForUpdate == null || itemForUpdate.getOwner().getId() != userId) {
@@ -60,6 +62,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public ItemDtoWithBookingAndComments getItemById(long userId, long id) {
         LocalDateTime currentTime = LocalDateTime.now();
         List<Booking> bookingsById = bookingRepository.findByItemId(id);
@@ -101,6 +104,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public List<ItemDtoWithBookingAndComments> getAllItemByOwner(long userId) {
         List<Item> itemsByOwner = itemRepository.findItemByOwnerId(userId);
         return itemsByOwner.stream().map(item -> getItemById(userId, item.getId()))
@@ -109,6 +113,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public List<ItemDto> search(String text) {
         if (text.isBlank()) {
             return List.of();
@@ -122,6 +127,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public CommentDto createComment(long userId, long itemId, CommentDto commentDto) {
         LocalDateTime currentTime = LocalDateTime.now();
         User cuttentUser = UserMapper.toUser(userService.getUserById(userId));

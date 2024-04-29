@@ -18,6 +18,7 @@ import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.userDto.UserMapper;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -31,6 +32,7 @@ public class BookingServiceImpl implements BookingService {
     private UserService userService;
 
     @Override
+    @Transactional
     public BookingDto createBooking(long userId, BookingDtoCreate bookingDto) {
         if (bookingDto.getStart().isAfter(bookingDto.getEnd()) ||
                 bookingDto.getStart().equals(bookingDto.getEnd())) {
@@ -55,6 +57,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public BookingDto confirmationBooking(long userId, long bookingId, boolean approved) {
         Booking currentBooking = bookingRepository.getReferenceById(bookingId);
         Item currentItem = currentBooking.getItem();
@@ -79,6 +82,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public BookingDto getBookingById(long userId, long bookingId) {
         Booking currentBooking = bookingRepository.getReferenceById(bookingId);
         Item currentItem = currentBooking.getItem();
@@ -90,6 +94,7 @@ public class BookingServiceImpl implements BookingService {
 
     @SneakyThrows
     @Override
+    @Transactional
     public List<BookingDto> getAllBookingsByBooker(long userId, String state) {
         userService.getUserById(userId);
         LocalDateTime currentTime = LocalDateTime.now();
@@ -121,6 +126,7 @@ public class BookingServiceImpl implements BookingService {
 
     @SneakyThrows
     @Override
+    @Transactional
     public List<BookingDto> getAllBookingsByOwner(long userId, String state) {
         userService.getUserById(userId);
         LocalDateTime currentTime = LocalDateTime.now();

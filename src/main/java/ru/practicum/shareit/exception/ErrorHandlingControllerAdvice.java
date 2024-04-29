@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolationException;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -62,6 +63,13 @@ public class ErrorHandlingControllerAdvice {
     public ResponseEntity<Violation> bookingStatusNotFound(NotFoundBookingStatusException e) {
         log.info("Запращиваемый BookingStatus не найден. Ошибка: {}", e.getMessage(), e);
         return new ResponseEntity<>(new Violation(e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UndeclaredThrowableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Violation bookingStatusNotFoundOnTransactional(UndeclaredThrowableException e) {
+        log.info("Запращиваемый BookingStatus не найден. Ошибка: {}", e.getMessage(), e);
+        return new Violation("Unknown state: UNSUPPORTED_STATUS");
     }
 
     @ExceptionHandler(Exception.class)

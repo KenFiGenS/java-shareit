@@ -25,6 +25,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -159,6 +160,7 @@ class BookingServiceImplTest {
         assertEquals(1, bookingDtoResult.getBooker().getId());
         assertEquals(1, bookingDtoResult.getItem().getId());
         assertEquals(BookingStatus.WAITING, bookingDtoResult.getStatus());
+        verify(bookingRepository).save(any());
     }
 
     @Test
@@ -249,6 +251,7 @@ class BookingServiceImplTest {
         BookingDto bookingDtoResult = bookingService.confirmationBooking(2, 3, true);
         assertEquals(3, bookingDtoResult.getId());
         assertEquals(BookingStatus.APPROVED, bookingDtoResult.getStatus());
+        verify(bookingRepository).save(any());
     }
 
     @Test
@@ -279,6 +282,7 @@ class BookingServiceImplTest {
         BookingDto bookingDtoResult = bookingService.confirmationBooking(2, 3, false);
         assertEquals(3, bookingDtoResult.getId());
         assertEquals(BookingStatus.REJECTED, bookingDtoResult.getStatus());
+        verify(bookingRepository).save(any());
     }
 
 

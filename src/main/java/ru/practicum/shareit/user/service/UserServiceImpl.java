@@ -9,6 +9,7 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.userDto.UserDto;
 import ru.practicum.shareit.user.userDto.UserMapper;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,11 +19,13 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Override
+    @Transactional
     public UserDto create(UserDto userDto) {
         return UserMapper.toUserDto(userRepository.save(UserMapper.toUser(userDto)));
     }
 
     @Override
+    @Transactional
     public UserDto patch(long id, UserDto userDto) {
         UserDto userForUpdate = getUserById(id);
         if (userDto.getEmail() != null && !userDto.getEmail().isBlank()) userForUpdate.setEmail(userDto.getEmail());
@@ -32,6 +35,7 @@ public class UserServiceImpl implements UserService {
 
     @SneakyThrows
     @Override
+    @Transactional
     public UserDto getUserById(long id) {
         User currentUser = userRepository.getReferenceById(id);
         if (currentUser == null) {
