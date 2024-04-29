@@ -44,7 +44,7 @@ public class BookingServiceImpl implements BookingService {
                 });
         User currentUser = UserMapper.toUser(userService.getUserById(userId));
         Item currentItem = itemRepository.getReferenceById(bookingDto.getItemId());
-        if (currentItem.getOwner().getId() == userId) {
+        if (currentItem.getOwner().getId() == currentUser.getId()) {
             throw new DataNotFound("Нельзя забронировать свою же вещь");
         }
         if (!currentItem.getAvailable()) {
@@ -148,12 +148,4 @@ public class BookingServiceImpl implements BookingService {
                 .map(BookingMapper::toBookingDto)
                 .collect(Collectors.toList());
     }
-
-    @Override
-    public BookingDto getAllBooking() {
-
-        return null;
-    }
-
-
 }
