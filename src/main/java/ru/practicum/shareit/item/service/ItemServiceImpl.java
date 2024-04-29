@@ -10,6 +10,7 @@ import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.comment.dto.CommentMapper;
+import ru.practicum.shareit.comment.model.Comment;
 import ru.practicum.shareit.comment.repository.CommentRepository;
 import ru.practicum.shareit.exception.DataNotFound;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -37,9 +38,8 @@ public class ItemServiceImpl implements ItemService {
     @SneakyThrows
     @Override
     public ItemDto createItem(long userId, ItemDto itemDto) {
-        User cuttentUser = UserMapper.toUser(userService.getUserById(userId));
-        Item item = ItemMapper.toItem(itemDto, cuttentUser);
-        item.setOwner(cuttentUser);
+        User currentUser = UserMapper.toUser(userService.getUserById(userId));
+        Item item = ItemMapper.toItem(itemDto, currentUser);
         Item itemAfterCreate = itemRepository.save(item);
         return ItemMapper.toItemDto(itemAfterCreate);
     }
@@ -48,7 +48,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto updateItem(long userId, long id, ItemDto itemDto) {
         Item itemForUpdate = itemRepository.getReferenceById(id);
-        if (itemForUpdate.getOwner().getId() != userId) {
+        if (itemForUpdate == null || itemForUpdate.getOwner().getId() != userId) {
             throw new DataNotFound("У данного пользователя нет вещи под ID: " + id);
         }
         if (itemDto.getName() != null && !itemDto.getName().isBlank()) itemForUpdate.setName(itemDto.getName());
@@ -90,13 +90,14 @@ public class ItemServiceImpl implements ItemService {
         if (nextBooking != null && !nextBooking.getStatus().equals(BookingStatus.REJECTED)) {
             nextBookingDto = BookingMapper.bookingDtoItemByIdDtoItem(nextBooking);
         }
-        List<CommentDto> comments = commentRepository.findAllByItemId(id).stream()
-                .map(CommentMapper::toCommentDto)
-                .collect(Collectors.toList());
+        List<CommentDto> commentsDto = commentRepository.findAllByItemId(id).stream()
+                    .map(CommentMapper::toCommentDto)
+                    .collect(Collectors.toList());
+
         return ItemMapper.itemDtoWithBookingAndComments(currentItem,
                 lastBookingDto,
                 nextBookingDto,
-                comments);
+                commentsDto);
     }
 
     @Override
