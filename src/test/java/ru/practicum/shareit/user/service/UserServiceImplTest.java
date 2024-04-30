@@ -130,9 +130,9 @@ class UserServiceImplTest {
     @Test
     void getAllUsersTest() {
         when(userRepository.findAll()).thenReturn(List.of(
-                        new User(1,"123@mail.ru", "Boris"),
-                        new User(2, "456@mail,ru", "Morris")
-                ));
+                new User(1, "123@mail.ru", "Boris"),
+                new User(2, "456@mail,ru", "Morris")
+        ));
 
         List<UserDto> allUsers = userService.getAllUsers();
         assertEquals(2, allUsers.size());

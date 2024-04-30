@@ -44,10 +44,10 @@ class UserControllerTest {
                 });
 
         mockMvc.perform((post("/users"))
-                    .content(objectMapper.writeValueAsString(userDtoForSave))
-                    .characterEncoding(StandardCharsets.UTF_8)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON))
+                        .content(objectMapper.writeValueAsString(userDtoForSave))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1L), Long.class))
                 .andExpect(jsonPath("$.email", is(userDtoForSave.getEmail())))

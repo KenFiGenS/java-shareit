@@ -56,7 +56,7 @@ class BookingControllerTest {
 
     @SneakyThrows
     @Test
-    void createBooking() {
+    void createBookingTest() {
         BookingDto bookingDto = getBookingForTest().get(1);
         BookingDtoCreate bookingDtoForCreate = new BookingDtoCreate(
                 0,
@@ -77,7 +77,25 @@ class BookingControllerTest {
 
     @SneakyThrows
     @Test
-    void confirmationBooking() {
+    void createBookingTestValidationMethodArgumentNotValidException() {
+        BookingDto bookingDto = getBookingForTest().get(0);
+        BookingDtoCreate bookingDtoForCreate = new BookingDtoCreate(
+                0,
+                bookingDto.getStart(),
+                bookingDto.getEnd(),
+                1);
+
+        mockMvc.perform((post("/bookings"))
+                        .content(objectMapper.writeValueAsString(bookingDtoForCreate))
+                        .header(REQUEST_HEADER_NAME, 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @SneakyThrows
+    @Test
+    void confirmationBookingTest() {
         BookingDto bookingDto = getBookingForTest().get(1);
 
         when(bookingService.confirmationBooking(anyLong(), anyLong(), anyBoolean())).thenReturn(bookingDto);
@@ -92,7 +110,7 @@ class BookingControllerTest {
 
     @SneakyThrows
     @Test
-    void getBookingById() {
+    void getBookingByIdTest() {
         BookingDto bookingDto = getBookingForTest().get(1);
 
         when(bookingService.getBookingById(anyLong(), anyLong())).thenReturn(bookingDto);
@@ -107,7 +125,7 @@ class BookingControllerTest {
 
     @SneakyThrows
     @Test
-    void getAllBookingsByBooker() {
+    void getAllBookingsByBookerTest() {
         List<BookingDto> bookings = getBookingForTest();
 
         when(bookingService.getAllBookingsByBooker(anyLong(), anyString())).thenReturn(bookings);
@@ -122,7 +140,7 @@ class BookingControllerTest {
 
     @SneakyThrows
     @Test
-    void getAllBookingByOwner() {
+    void getAllBookingByOwnerTest() {
         List<BookingDto> bookings = getBookingForTest();
 
         when(bookingService.getAllBookingsByOwner(anyLong(), anyString())).thenReturn(bookings);

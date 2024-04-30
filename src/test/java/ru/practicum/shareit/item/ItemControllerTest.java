@@ -8,17 +8,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
 import ru.practicum.shareit.booking.dto.BookingDtoItemById;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoWithBookingAndComments;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
@@ -104,10 +101,10 @@ class ItemControllerTest {
         when(itemService.updateItem(anyLong(), anyLong(), any())).thenReturn(itemDtoAfterUpdate);
 
         mockMvc.perform((patch("/items/1"))
-                .content(objectMapper.writeValueAsString(itemDtoForUpdate))
-                .header(REQUEST_HEADER_NAME, 1)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
+                        .content(objectMapper.writeValueAsString(itemDtoForUpdate))
+                        .header(REQUEST_HEADER_NAME, 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1L), Long.class))
                 .andExpect(jsonPath("$.name", is(itemDtoAfterUpdate.getName())))
@@ -137,9 +134,9 @@ class ItemControllerTest {
         when(itemService.getAllItemByOwner(anyLong())).thenReturn(items);
 
         mockMvc.perform((get("/items"))
-                .header(REQUEST_HEADER_NAME, 1)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
+                        .header(REQUEST_HEADER_NAME, 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(items)));
     }

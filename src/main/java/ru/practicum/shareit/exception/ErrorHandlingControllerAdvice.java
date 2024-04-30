@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.persistence.EntityNotFoundException;
-import javax.validation.ConstraintViolationException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,20 +17,6 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 @Slf4j
 public class ErrorHandlingControllerAdvice {
-
-    @ExceptionHandler(ConstraintViolationException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ValidationErrorResponse onConstraintValidationException(
-            ConstraintViolationException e
-    ) {
-        log.info("Получен статус 409 Bad Request {}", e.getMessage(), e);
-        final List<Violation> violations = e.getConstraintViolations().stream()
-                .map(
-                        violation -> new Violation(violation.getMessage())
-                )
-                .collect(Collectors.toList());
-        return new ValidationErrorResponse(violations);
-    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)

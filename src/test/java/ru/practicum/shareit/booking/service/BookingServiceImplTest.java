@@ -22,7 +22,8 @@ import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
@@ -55,7 +56,7 @@ class BookingServiceImplTest {
                 LocalDateTime.now(),
                 1);
         assertThrows(IllegalArgumentException.class,
-                ()-> bookingService.createBooking(1, bookingDtoCreate));
+                () -> bookingService.createBooking(1, bookingDtoCreate));
     }
 
     @Test
@@ -76,7 +77,7 @@ class BookingServiceImplTest {
         when(bookingRepository.findByItemId(anyLong())).thenReturn(bookingsFromRepository);
 
         assertThrows(IllegalArgumentException.class,
-                ()-> bookingService.createBooking(1, bookingDtoCreate));
+                () -> bookingService.createBooking(1, bookingDtoCreate));
     }
 
     @Test
@@ -99,7 +100,7 @@ class BookingServiceImplTest {
         when(itemRepository.getReferenceById(anyLong())).thenReturn(itemForBooking);
 
         assertThrows(DataNotFound.class,
-                ()-> bookingService.createBooking(1, bookingDtoCreate));
+                () -> bookingService.createBooking(1, bookingDtoCreate));
     }
 
     @Test
@@ -122,9 +123,8 @@ class BookingServiceImplTest {
         when(itemRepository.getReferenceById(anyLong())).thenReturn(itemForBooking);
 
         assertThrows(IllegalArgumentException.class,
-                ()-> bookingService.createBooking(1, bookingDtoCreate));
+                () -> bookingService.createBooking(1, bookingDtoCreate));
     }
-
 
 
     @Test
@@ -155,7 +155,7 @@ class BookingServiceImplTest {
         when(itemRepository.getReferenceById(anyLong())).thenReturn(itemForBooking);
         when(bookingRepository.save(any())).thenReturn(bookingAfterCreate);
 
-        BookingDto bookingDtoResult =  bookingService.createBooking(1, bookingDtoCreate);
+        BookingDto bookingDtoResult = bookingService.createBooking(1, bookingDtoCreate);
         assertEquals(3, bookingDtoResult.getId());
         assertEquals(1, bookingDtoResult.getBooker().getId());
         assertEquals(1, bookingDtoResult.getItem().getId());

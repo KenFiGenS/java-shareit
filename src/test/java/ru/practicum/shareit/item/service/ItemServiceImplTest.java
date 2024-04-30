@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item.service;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -84,7 +83,7 @@ class ItemServiceImplTest {
         when(itemRepository.getReferenceById(anyLong())).thenReturn(itemFromRepository);
         when(itemRepository.save(any())).thenReturn(itemAfterUpdate);
 
-        ItemDto itemDtoUpdateResult = itemService.updateItem(1,1, itemDtoForUpdate);
+        ItemDto itemDtoUpdateResult = itemService.updateItem(1, 1, itemDtoForUpdate);
         assertEquals(1, itemDtoUpdateResult.getId());
         assertEquals("NewHammer", itemAfterUpdate.getName());
         assertEquals("Very Big hammer", itemAfterUpdate.getDescription());
@@ -102,7 +101,7 @@ class ItemServiceImplTest {
         when(itemRepository.getReferenceById(anyLong())).thenReturn(itemFromRepository);
         when(itemRepository.save(any())).thenReturn(itemAfterUpdate);
 
-        ItemDto itemDtoUpdateResult = itemService.updateItem(1,1, itemDtoForUpdate);
+        ItemDto itemDtoUpdateResult = itemService.updateItem(1, 1, itemDtoForUpdate);
         assertEquals(1, itemDtoUpdateResult.getId());
         assertEquals("NewHammer", itemAfterUpdate.getName());
         assertEquals("Big hammer", itemAfterUpdate.getDescription());
@@ -120,7 +119,7 @@ class ItemServiceImplTest {
         when(itemRepository.getReferenceById(anyLong())).thenReturn(itemFromRepository);
         when(itemRepository.save(any())).thenReturn(itemAfterUpdate);
 
-        ItemDto itemDtoUpdateResult = itemService.updateItem(1,1, itemDtoForUpdate);
+        ItemDto itemDtoUpdateResult = itemService.updateItem(1, 1, itemDtoForUpdate);
         assertEquals(1, itemDtoUpdateResult.getId());
         assertEquals("Hammer", itemAfterUpdate.getName());
         assertEquals("Very Big hammer", itemAfterUpdate.getDescription());
@@ -138,7 +137,7 @@ class ItemServiceImplTest {
         when(itemRepository.getReferenceById(anyLong())).thenReturn(itemFromRepository);
         when(itemRepository.save(any())).thenReturn(itemAfterUpdate);
 
-        ItemDto itemDtoUpdateResult = itemService.updateItem(1,1, itemDtoForUpdate);
+        ItemDto itemDtoUpdateResult = itemService.updateItem(1, 1, itemDtoForUpdate);
         assertEquals(1, itemDtoUpdateResult.getId());
         assertEquals("Hammer", itemAfterUpdate.getName());
         assertEquals("Big hammer", itemAfterUpdate.getDescription());
@@ -156,7 +155,7 @@ class ItemServiceImplTest {
                 new Booking(2, LocalDateTime.now().minusMonths(1), LocalDateTime.now().minusWeeks(1), itemForBooking, booker, BookingStatus.APPROVED)
         );
         List<Comment> comments = List.of(
-                new Comment(1, "Comment text",itemForBooking, booker, LocalDateTime.now()),
+                new Comment(1, "Comment text", itemForBooking, booker, LocalDateTime.now()),
                 new Comment(2, "Comment text2", itemForBooking, booker, LocalDateTime.now().minusDays(1))
         );
 
@@ -183,7 +182,7 @@ class ItemServiceImplTest {
                 new Booking(2, LocalDateTime.now().minusMonths(1), LocalDateTime.now().minusWeeks(1), itemForBooking, booker, BookingStatus.APPROVED)
         );
         List<Comment> comments = List.of(
-                new Comment(1, "Comment text",itemForBooking, booker, LocalDateTime.now()),
+                new Comment(1, "Comment text", itemForBooking, booker, LocalDateTime.now()),
                 new Comment(2, "Comment text2", itemForBooking, booker, LocalDateTime.now().minusDays(1))
         );
 
@@ -210,7 +209,7 @@ class ItemServiceImplTest {
                 new Booking(1, LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(3), itemForBooking, booker, BookingStatus.APPROVED)
         );
         List<Comment> comments = List.of(
-                new Comment(1, "Comment text",itemForBooking, booker, LocalDateTime.now()),
+                new Comment(1, "Comment text", itemForBooking, booker, LocalDateTime.now()),
                 new Comment(2, "Comment text2", itemForBooking, booker, LocalDateTime.now().minusDays(1))
         );
 
@@ -235,7 +234,7 @@ class ItemServiceImplTest {
         Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner);
 
         List<Comment> comments = List.of(
-                new Comment(1, "Comment text",itemForBooking, booker, LocalDateTime.now()),
+                new Comment(1, "Comment text", itemForBooking, booker, LocalDateTime.now()),
                 new Comment(2, "Comment text2", itemForBooking, booker, LocalDateTime.now().minusDays(1))
         );
 
@@ -285,7 +284,7 @@ class ItemServiceImplTest {
                 new Booking(2, LocalDateTime.now().minusMonths(1), LocalDateTime.now().minusWeeks(1), itemForBooking1, booker, BookingStatus.APPROVED)
         );
         List<Comment> comments = List.of(
-                new Comment(1, "Comment text",itemForBooking1, booker, LocalDateTime.now()),
+                new Comment(1, "Comment text", itemForBooking1, booker, LocalDateTime.now()),
                 new Comment(2, "Comment text2", itemForBooking1, booker, LocalDateTime.now().minusDays(1))
         );
         List<Item> itemsFromRepository = List.of(itemForBooking1, itemForBooking2);
@@ -328,7 +327,7 @@ class ItemServiceImplTest {
                 new Booking(1, LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(3), itemForComment, user, BookingStatus.APPROVED),
                 new Booking(2, LocalDateTime.now().minusMonths(1), LocalDateTime.now().minusWeeks(1), itemForComment, user, BookingStatus.APPROVED)
         );
-        CommentDto commentDto = new CommentDto(0,  "Comment text", null, null);
+        CommentDto commentDto = new CommentDto(0, "Comment text", null, null);
         Comment comment = new Comment(1, "Comment text", itemForComment, user, LocalDateTime.now());
 
         when(userService.getUserById(anyLong())).thenReturn(userDto);
@@ -350,7 +349,7 @@ class ItemServiceImplTest {
         UserDto userDto = new UserDto(1, "email@mail.ru", "NameUser");
         User owner1 = new User(2, "email2@mail.ru", "NameUser2");
         Item itemForComment = new Item(1, "Hammer", "Big hammer", true, owner1);
-        CommentDto commentDto = new CommentDto(0,  "Comment text", null, null);
+        CommentDto commentDto = new CommentDto(0, "Comment text", null, null);
 
         when(userService.getUserById(anyLong())).thenReturn(userDto);
         when(itemRepository.getReferenceById(anyLong())).thenReturn(itemForComment);
