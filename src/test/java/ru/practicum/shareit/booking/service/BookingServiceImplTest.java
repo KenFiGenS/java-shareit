@@ -63,7 +63,7 @@ class BookingServiceImplTest {
     void createBookingTestThrowIllegalArgumentExceptionItemHaveBookingInThisDate() {
         User booker = new User(1, "email@mail.ru", "NameUser");
         User owner = new User(2, "email2@mail.ru", "NameUser2");
-        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner);
+        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner, null);
         List<Booking> bookingsFromRepository = List.of(
                 new Booking(1, LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(3), itemForBooking, booker, BookingStatus.APPROVED),
                 new Booking(2, LocalDateTime.now().minusMonths(1), LocalDateTime.now().minusWeeks(1), itemForBooking, booker, BookingStatus.APPROVED)
@@ -84,7 +84,7 @@ class BookingServiceImplTest {
     void createBookingTestThrowDataNotFoundExceptionNotAvailable() {
         User booker = new User(1, "email@mail.ru", "NameUser");
         User owner = new User(2, "email2@mail.ru", "NameUser2");
-        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner);
+        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner, null);
         List<Booking> bookingsFromRepository = List.of(
                 new Booking(1, LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(3), itemForBooking, booker, BookingStatus.APPROVED),
                 new Booking(2, LocalDateTime.now().minusMonths(1), LocalDateTime.now().minusWeeks(1), itemForBooking, booker, BookingStatus.APPROVED)
@@ -107,7 +107,7 @@ class BookingServiceImplTest {
     void createBookingTestThrowIllegalArgumentExceptionNotAvailable() {
         User booker = new User(1, "email@mail.ru", "NameUser");
         User owner = new User(2, "email2@mail.ru", "NameUser2");
-        Item itemForBooking = new Item(1, "Hammer", "Big hammer", false, owner);
+        Item itemForBooking = new Item(1, "Hammer", "Big hammer", false, owner, null);
         List<Booking> bookingsFromRepository = List.of(
                 new Booking(1, LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(3), itemForBooking, booker, BookingStatus.APPROVED),
                 new Booking(2, LocalDateTime.now().minusMonths(1), LocalDateTime.now().minusWeeks(1), itemForBooking, booker, BookingStatus.APPROVED)
@@ -131,7 +131,7 @@ class BookingServiceImplTest {
     void createBookingTest() {
         User booker = new User(1, "email@mail.ru", "NameUser");
         User owner = new User(2, "email2@mail.ru", "NameUser2");
-        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner);
+        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner, null);
         List<Booking> bookingsFromRepository = List.of(
                 new Booking(1, LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(3), itemForBooking, booker, BookingStatus.APPROVED),
                 new Booking(2, LocalDateTime.now().minusMonths(1), LocalDateTime.now().minusWeeks(1), itemForBooking, booker, BookingStatus.APPROVED)
@@ -167,7 +167,7 @@ class BookingServiceImplTest {
     void confirmationBookingTestThrowEntityNotFoundException() {
         User booker = new User(1, "email@mail.ru", "NameUser");
         User owner = new User(2, "email2@mail.ru", "NameUser2");
-        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner);
+        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner, null);
         Booking bookingAfterCreate = new Booking(
                 3,
                 LocalDateTime.now().plusDays(4),
@@ -187,7 +187,7 @@ class BookingServiceImplTest {
     void confirmationBookingTestThrowIllegalArgumentExceptionNotOwner() {
         User booker = new User(1, "email@mail.ru", "NameUser");
         User owner = new User(2, "email2@mail.ru", "NameUser2");
-        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner);
+        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner, null);
         Booking bookingAfterCreate = new Booking(
                 3,
                 LocalDateTime.now().plusDays(4),
@@ -207,7 +207,7 @@ class BookingServiceImplTest {
     void confirmationBookingTestThrowIllegalArgumentExceptionIsApproved() {
         User booker = new User(1, "email@mail.ru", "NameUser");
         User owner = new User(2, "email2@mail.ru", "NameUser2");
-        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner);
+        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner, null);
         Booking bookingAfterCreate = new Booking(
                 3,
                 LocalDateTime.now().plusDays(4),
@@ -227,7 +227,7 @@ class BookingServiceImplTest {
     void confirmationBookingTestApproved() {
         User booker = new User(1, "email@mail.ru", "NameUser");
         User owner = new User(2, "email2@mail.ru", "NameUser2");
-        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner);
+        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner, null);
         Booking bookingAfterCreate = new Booking(
                 3,
                 LocalDateTime.now().plusDays(4),
@@ -258,7 +258,7 @@ class BookingServiceImplTest {
     void confirmationBookingTestRejected() {
         User booker = new User(1, "email@mail.ru", "NameUser");
         User owner = new User(2, "email2@mail.ru", "NameUser2");
-        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner);
+        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner, null);
         Booking bookingAfterCreate = new Booking(
                 3,
                 LocalDateTime.now().plusDays(4),
@@ -290,7 +290,7 @@ class BookingServiceImplTest {
     void getBookingByIdTestThrowDataNotFound() {
         User booker = new User(1, "email@mail.ru", "NameUser");
         User owner = new User(2, "email2@mail.ru", "NameUser2");
-        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner);
+        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner, null);
         Booking bookingFromRepository = new Booking(1,
                 LocalDateTime.now().plusDays(1),
                 LocalDateTime.now().plusDays(3),
@@ -308,7 +308,7 @@ class BookingServiceImplTest {
     void getBookingByIdTest() {
         User booker = new User(1, "email@mail.ru", "NameUser");
         User owner = new User(2, "email2@mail.ru", "NameUser2");
-        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner);
+        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner, null);
         Booking bookingFromRepository = new Booking(1,
                 LocalDateTime.now().plusDays(1),
                 LocalDateTime.now().plusDays(3),
@@ -326,7 +326,7 @@ class BookingServiceImplTest {
     void getAllBookingsByBookerTestStateAll() {
         User booker = new User(1, "email@mail.ru", "NameUser");
         User owner = new User(2, "email2@mail.ru", "NameUser2");
-        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner);
+        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner, null);
         Booking bookingFromFuture = new Booking(
                 1,
                 LocalDateTime.now().plusDays(4),
@@ -364,7 +364,7 @@ class BookingServiceImplTest {
         LocalDateTime currentTime = LocalDateTime.now();
         User booker = new User(1, "email@mail.ru", "NameUser");
         User owner = new User(2, "email2@mail.ru", "NameUser2");
-        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner);
+        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner, null);
         Booking bookingFromPast = new Booking(
                 2,
                 LocalDateTime.now().minusMonths(1),
@@ -385,7 +385,7 @@ class BookingServiceImplTest {
     void getAllBookingsByBookerTestStateCurrent() {
         User booker = new User(1, "email@mail.ru", "NameUser");
         User owner = new User(2, "email2@mail.ru", "NameUser2");
-        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner);
+        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner, null);
         Booking bookingFromCurrent = new Booking(
                 3,
                 LocalDateTime.now().minusDays(2),
@@ -407,7 +407,7 @@ class BookingServiceImplTest {
     void getAllBookingsByBookerTestStateFuture() {
         User booker = new User(1, "email@mail.ru", "NameUser");
         User owner = new User(2, "email2@mail.ru", "NameUser2");
-        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner);
+        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner, null);
         Booking bookingFromFuture = new Booking(
                 1,
                 LocalDateTime.now().plusDays(4),
@@ -429,7 +429,7 @@ class BookingServiceImplTest {
     void getAllBookingsByBookerTestStateApproved() {
         User booker = new User(1, "email@mail.ru", "NameUser");
         User owner = new User(2, "email2@mail.ru", "NameUser2");
-        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner);
+        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner, null);
         Booking bookingFromFuture = new Booking(
                 1,
                 LocalDateTime.now().plusDays(4),
@@ -476,7 +476,7 @@ class BookingServiceImplTest {
     void getAllBookingsByOwnerTestTateAll() {
         User booker = new User(1, "email@mail.ru", "NameUser");
         User owner = new User(2, "email2@mail.ru", "NameUser2");
-        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner);
+        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner, null);
         Booking bookingFromFuture = new Booking(
                 1,
                 LocalDateTime.now().plusDays(4),
@@ -513,7 +513,7 @@ class BookingServiceImplTest {
     void getAllBookingsByOwnerTestTateCurrent() {
         User booker = new User(1, "email@mail.ru", "NameUser");
         User owner = new User(2, "email2@mail.ru", "NameUser2");
-        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner);
+        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner, null);
         Booking bookingFromCurrent = new Booking(
                 3,
                 LocalDateTime.now().minusDays(2),
@@ -535,7 +535,7 @@ class BookingServiceImplTest {
     void getAllBookingsByOwnerTestTateFuture() {
         User booker = new User(1, "email@mail.ru", "NameUser");
         User owner = new User(2, "email2@mail.ru", "NameUser2");
-        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner);
+        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner, null);
         Booking bookingFromFuture = new Booking(
                 1,
                 LocalDateTime.now().plusDays(4),
@@ -557,7 +557,7 @@ class BookingServiceImplTest {
     void getAllBookingsByOwnerTestTatePast() {
         User booker = new User(1, "email@mail.ru", "NameUser");
         User owner = new User(2, "email2@mail.ru", "NameUser2");
-        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner);
+        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner, null);
         Booking bookingFromPast = new Booking(
                 2,
                 LocalDateTime.now().minusMonths(1),
@@ -578,7 +578,7 @@ class BookingServiceImplTest {
     void getAllBookingsByOwnerTestTateApproved() {
         User booker = new User(1, "email@mail.ru", "NameUser");
         User owner = new User(2, "email2@mail.ru", "NameUser2");
-        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner);
+        Item itemForBooking = new Item(1, "Hammer", "Big hammer", true, owner, null);
         Booking bookingFromFuture = new Booking(
                 1,
                 LocalDateTime.now().plusDays(4),

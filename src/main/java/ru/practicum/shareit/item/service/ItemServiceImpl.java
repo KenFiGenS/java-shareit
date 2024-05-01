@@ -17,6 +17,8 @@ import ru.practicum.shareit.item.dto.ItemDtoWithBookingAndComments;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.userDto.UserMapper;
@@ -34,13 +36,20 @@ public class ItemServiceImpl implements ItemService {
     private final UserService userService;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
 
     @SneakyThrows
     @Override
     @Transactional
     public ItemDto createItem(long userId, ItemDto itemDto) {
         User currentUser = UserMapper.toUser(userService.getUserById(userId));
-        Item item = ItemMapper.toItem(itemDto, currentUser);
+        Item item;
+        if (itemDto.getRequestId() == 0) {
+            item = ItemMapper.toItem(itemDto, currentUser, null);
+        } else {
+            ItemRequest itemRequest = itemRequestRepository.getReferenceById(itemDto.getRequestId());
+            item = ItemMapper.toItem(itemDto, currentUser, itemRequest);
+        }
         Item itemAfterCreate = itemRepository.save(item);
         return ItemMapper.toItemDto(itemAfterCreate);
     }
@@ -57,6 +66,7 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getDescription() != null && !itemDto.getDescription().isBlank())
             itemForUpdate.setDescription(itemDto.getDescription());
         if (itemDto.getAvailable() != null) itemForUpdate.setAvailable(itemDto.getAvailable());
+        if (itemDto.getRequestId() > 0) itemForUpdate.setItemRequest(itemRequestRepository.getReferenceById(itemDto.getRequestId()));
         Item itemAfterUpdate = itemRepository.save(itemForUpdate);
         return ItemMapper.toItemDto(itemAfterUpdate);
     }

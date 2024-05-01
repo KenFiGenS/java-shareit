@@ -22,9 +22,9 @@ class ItemRepositoryTest {
     void searchByNameAndDescriptionTest() {
         User user = new User(0, "NameUser@mail.ru", "NameUser");
         userRepository.save(user);
-        Item item1 = new Item(0, "Hammer", "Big hammer", true, user);
-        Item item2 = new Item(0, "Knife", "Small", true, user);
-        Item item3 = new Item(0, "Sword", "Sword of knight", true, user);
+        Item item1 = new Item(0, "Hammer", "Big hammer", true, user, null);
+        Item item2 = new Item(0, "Knife", "Small", true, user, null);
+        Item item3 = new Item(0, "Sword", "Sword of knight", true, user, null);
         itemRepository.save(item1);
         long item2Id = itemRepository.save(item2).getId();
         long item3Id = itemRepository.save(item3).getId();

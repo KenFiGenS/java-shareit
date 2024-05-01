@@ -36,7 +36,7 @@ class BookingControllerTest {
 
     private List<BookingDto> getBookingForTest() {
         UserDto booker = new UserDto(1, "Lol@mail.ru", "Lola");
-        ItemDto item = new ItemDto(1, "Hammer", "Big hammer", true);
+        ItemDto item = new ItemDto(1, "Hammer", "Big hammer", true, null);
         BookingDto bookingDto1 = new BookingDto(
                 1L,
                 LocalDateTime.now().minusDays(4),

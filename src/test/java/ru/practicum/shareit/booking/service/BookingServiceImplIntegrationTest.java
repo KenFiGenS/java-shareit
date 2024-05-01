@@ -35,9 +35,9 @@ class BookingServiceImplIntegrationTest {
         UserDto booker = userService.create(new UserDto(0, "email@mail.ru", "NameUser"));
         UserDto owner1 = userService.create(new UserDto(0, "email2@mail.ru", "NameUser2"));
         UserDto owner2 = userService.create(new UserDto(0, "email3@mail.ru", "NameUser3"));
-        Item itemForBooking1 = new Item(1, "Hammer", "Big hammer", true, UserMapper.toUser(owner1));
-        Item itemForBooking2 = new Item(2, "Glasses", "Big Glasses", true, UserMapper.toUser(owner1));
-        Item itemForBooking3 = new Item(3, "Camera", "Professional camera", true, UserMapper.toUser(owner2));
+        Item itemForBooking1 = new Item(0, "Hammer", "Big hammer", true, UserMapper.toUser(owner1), null);
+        Item itemForBooking2 = new Item(0, "Glasses", "Big Glasses", true, UserMapper.toUser(owner1), null);
+        Item itemForBooking3 = new Item(0, "Camera", "Professional camera", true, UserMapper.toUser(owner2), null);
         long itemId1 = itemRepository.save(itemForBooking1).getId();
         itemRepository.save(itemForBooking2);
         itemRepository.save(itemForBooking3);
