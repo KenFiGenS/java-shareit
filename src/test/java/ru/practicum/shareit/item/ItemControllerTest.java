@@ -74,8 +74,8 @@ class ItemControllerTest {
     @SneakyThrows
     @Test
     void createItem() {
-        ItemDto itemAfter = new ItemDto(1, "Hammer", "Big hammer", true, null);
-        ItemDto itemBefore = new ItemDto(0, "Hammer", "Big hammer", true, null);
+        ItemDto itemAfter = new ItemDto(1, "Hammer", "Big hammer", true, 0);
+        ItemDto itemBefore = new ItemDto(0, "Hammer", "Big hammer", true, 0);
 
         when(itemService.createItem(anyLong(), any())).thenReturn(itemAfter);
 
@@ -95,8 +95,8 @@ class ItemControllerTest {
     @SneakyThrows
     @Test
     void updateItem() {
-        ItemDto itemDtoForUpdate = new ItemDto(0, null, "Very Big hammer", null, null);
-        ItemDto itemDtoAfterUpdate = new ItemDto(1, "Hammer", "Very Big hammer", true, null);
+        ItemDto itemDtoForUpdate = new ItemDto(0, null, "Very Big hammer", null, 0);
+        ItemDto itemDtoAfterUpdate = new ItemDto(1, "Hammer", "Very Big hammer", true, 0);
 
         when(itemService.updateItem(anyLong(), anyLong(), any())).thenReturn(itemDtoAfterUpdate);
 
@@ -144,8 +144,8 @@ class ItemControllerTest {
     @SneakyThrows
     @Test
     void searchByNameAndDescription() {
-        ItemDto item2 = new ItemDto(2, "Knife", "Small", true, null);
-        ItemDto item3 = new ItemDto(3, "Sword", "Sword of knight", true, null);
+        ItemDto item2 = new ItemDto(2, "Knife", "Small", true, 0);
+        ItemDto item3 = new ItemDto(3, "Sword", "Sword of knight", true, 0);
         List<ItemDto> itemSearchResult = List.of(item2, item3);
 
         when(itemService.search(anyString())).thenReturn(itemSearchResult);

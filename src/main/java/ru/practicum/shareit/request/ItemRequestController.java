@@ -8,6 +8,8 @@ import ru.practicum.shareit.exception.Marker;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.service.ItemRequestService;
 
+import java.util.List;
+
 import static ru.practicum.shareit.constans.Constants.REQUEST_HEADER_NAME;
 
 
@@ -30,7 +32,13 @@ public class ItemRequestController {
     @GetMapping("/{requestId}")
     public ItemRequestDto getRequestById(@RequestHeader(REQUEST_HEADER_NAME) long userId,
                                          @PathVariable long requestId) {
-        log.info("Выполняется запрос получения информацтт о ItemRequest под id: {}", requestId);
-        return itemRequestService.getTrquestById(userId, requestId);
+        log.info("Выполняется запрос получения информации о ItemRequest под id: {}", requestId);
+        return itemRequestService.getRequestById(userId, requestId);
+    }
+
+    @GetMapping
+    public List<ItemRequestDto> getRequests(@RequestHeader(REQUEST_HEADER_NAME) long userId) {
+        log.info("Выполняется запрос получения информации о всех ItemRequest пользователя под id: {}", userId);
+        return itemRequestService.getRequestsByUser(userId);
     }
 }

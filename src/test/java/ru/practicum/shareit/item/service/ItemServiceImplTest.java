@@ -58,7 +58,7 @@ class ItemServiceImplTest {
     @Test
     void createItemTest() {
         UserDto userDtoFromUserService = new UserDto(1, "email@mail.ru", "NameUser");
-        ItemDto itemDtoBeforeSave = new ItemDto(0, "Hammer", "Big hammer", true, null);
+        ItemDto itemDtoBeforeSave = new ItemDto(0, "Hammer", "Big hammer", true, 0);
         Item itemAfterSave = new Item(1, "Hammer", "Big hammer", true, UserMapper.toUser(userDtoFromUserService), null);
 
         when(userService.getUserById(anyLong())).thenReturn(userDtoFromUserService);
@@ -73,7 +73,7 @@ class ItemServiceImplTest {
     void updateItemTestThrowDataNotFoundException() {
         assertThrows(
                 DataNotFound.class,
-                () -> itemService.updateItem(1, 1, new ItemDto(0, "Hammer", "Big hammer", true, null))
+                () -> itemService.updateItem(1, 1, new ItemDto(0, "Hammer", "Big hammer", true, 0))
         );
     }
 
@@ -81,7 +81,7 @@ class ItemServiceImplTest {
     void updateItemTest() {
         User owner = new User(1, "email@mail.ru", "NameUser");
         Item itemFromRepository = new Item(1, "Hammer", "Big hammer", true, owner, null);
-        ItemDto itemDtoForUpdate = new ItemDto(0, "NewHammer", "Very Big hammer", true, null);
+        ItemDto itemDtoForUpdate = new ItemDto(0, "NewHammer", "Very Big hammer", true, 0);
         Item itemAfterUpdate = new Item(1, "NewHammer", "Very Big hammer", true, owner, null);
 
         when(itemRepository.getReferenceById(anyLong())).thenReturn(itemFromRepository);
@@ -99,7 +99,7 @@ class ItemServiceImplTest {
     void updateItemNameTest() {
         User owner = new User(1, "email@mail.ru", "NameUser");
         Item itemFromRepository = new Item(1, "Hammer", "Big hammer", true, owner, null);
-        ItemDto itemDtoForUpdate = new ItemDto(0, "NewHammer", null, null, null);
+        ItemDto itemDtoForUpdate = new ItemDto(0, "NewHammer", null, null, 0);
         Item itemAfterUpdate = new Item(1, "NewHammer", "Big hammer", true, owner, null);
 
         when(itemRepository.getReferenceById(anyLong())).thenReturn(itemFromRepository);
@@ -117,7 +117,7 @@ class ItemServiceImplTest {
     void updateItemDescriptionTest() {
         User owner = new User(1, "email@mail.ru", "NameUser");
         Item itemFromRepository = new Item(1, "Hammer", "Big hammer", true, owner, null);
-        ItemDto itemDtoForUpdate = new ItemDto(0, null, "Very Big hammer", null, null);
+        ItemDto itemDtoForUpdate = new ItemDto(0, null, "Very Big hammer", null, 0);
         Item itemAfterUpdate = new Item(1, "Hammer", "Very Big hammer", true, owner, null);
 
         when(itemRepository.getReferenceById(anyLong())).thenReturn(itemFromRepository);
@@ -135,7 +135,7 @@ class ItemServiceImplTest {
     void updateItemAvailableTest() {
         User owner = new User(1, "email@mail.ru", "NameUser");
         Item itemFromRepository = new Item(1, "Hammer", "Big hammer", true, owner, null);
-        ItemDto itemDtoForUpdate = new ItemDto(0, null, null, false, null);
+        ItemDto itemDtoForUpdate = new ItemDto(0, null, null, false, 0);
         Item itemAfterUpdate = new Item(1, "Hammer", "Big hammer", false, owner, null);
 
         when(itemRepository.getReferenceById(anyLong())).thenReturn(itemFromRepository);

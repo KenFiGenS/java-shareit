@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDto getUserById(long id) {
         User currentUser = userRepository.getReferenceById(id);
-        if (currentUser == null) {
+        if (currentUser.getId() == 0) {
             throw new DataNotFound("Пользователь c ID: " + id + " не найден!");
         }
         return UserMapper.toUserDto(currentUser);
