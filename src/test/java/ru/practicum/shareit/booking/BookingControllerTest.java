@@ -128,7 +128,7 @@ class BookingControllerTest {
     void getAllBookingsByBookerTest() {
         List<BookingDto> bookings = getBookingForTest();
 
-        when(bookingService.getAllBookingsByBooker(anyLong(), anyString())).thenReturn(bookings);
+        when(bookingService.getAllBookingsByBooker(anyLong(), anyString(), anyInt(), anyInt())).thenReturn(bookings);
 
         mockMvc.perform((get("/bookings?state=ALL"))
                         .header(REQUEST_HEADER_NAME, 1)
@@ -143,7 +143,7 @@ class BookingControllerTest {
     void getAllBookingByOwnerTest() {
         List<BookingDto> bookings = getBookingForTest();
 
-        when(bookingService.getAllBookingsByOwner(anyLong(), anyString())).thenReturn(bookings);
+        when(bookingService.getAllBookingsByOwner(anyLong(), anyString(), anyInt(), anyInt())).thenReturn(bookings);
 
         mockMvc.perform((get("/bookings/owner?state=ALL"))
                         .header(REQUEST_HEADER_NAME, 1)

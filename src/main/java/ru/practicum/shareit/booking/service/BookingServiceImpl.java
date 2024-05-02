@@ -2,6 +2,9 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoCreate;
@@ -23,7 +26,9 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class BookingServiceImpl implements BookingService {
@@ -95,10 +100,27 @@ public class BookingServiceImpl implements BookingService {
     @SneakyThrows
     @Override
     @Transactional
-    public List<BookingDto> getAllBookingsByBooker(long userId, String state) {
+    public List<BookingDto> getAllBookingsByBooker(long userId, String state, int from, int size) {
         userService.getUserById(userId);
+        if (from == 0 && size == 0) {
+            throw new IllegalArgumentException("Неверный индекс начального элемента и размера страницы");
+        }
+        if (size <= 0) {
+            throw new IllegalArgumentException("Неверный индекс размера страницы");
+        }
+        if (from < 0) {
+            throw new IllegalArgumentException("Неверный индекс начального элемента");
+        }
         LocalDateTime currentTime = LocalDateTime.now();
         List<Booking> currentBookingList;
+        if (state.equals("ALL") && from > 0) {
+            int currentPage = from/size;
+            System.out.println(currentPage);
+            Pageable pageable = PageRequest.of(currentPage, size);
+            return bookingRepository.findByBookerIdOrderByStartDesc(userId, pageable).stream()
+                    .map(BookingMapper::toBookingDto)
+                    .collect(Collectors.toList());
+        }
         if (state.equals("ALL")) {
             currentBookingList = bookingRepository.findByBookerId(userId);
         } else if (state.equals("CURRENT")) {
@@ -127,10 +149,27 @@ public class BookingServiceImpl implements BookingService {
     @SneakyThrows
     @Override
     @Transactional
-    public List<BookingDto> getAllBookingsByOwner(long userId, String state) {
+    public List<BookingDto> getAllBookingsByOwner(long userId, String state, int from, int size) {
         userService.getUserById(userId);
+        if (from == 0 && size == 0) {
+            throw new IllegalArgumentException("Неверный индекс начального элемента и размера страницы");
+        }
+        if (size <= 0) {
+            throw new IllegalArgumentException("Неверный индекс размера страницы");
+        }
+        if (from < 0) {
+            throw new IllegalArgumentException("Неверный индекс начального элемента");
+        }
         LocalDateTime currentTime = LocalDateTime.now();
         List<Booking> currentBookingList;
+        if (state.equals("ALL") && from > 0) {
+            int currentPage = from/size;
+            System.out.println(currentPage);
+            Pageable pageable = PageRequest.of(currentPage, size);
+            return bookingRepository.findByItemOwnerIdOrderByStartDesc(userId, pageable).stream()
+                    .map(BookingMapper::toBookingDto)
+                    .collect(Collectors.toList());
+        }
         if (state.equals("ALL")) {
             currentBookingList = bookingRepository.findByItemOwnerId(userId);
         } else if (state.equals("CURRENT")) {

@@ -65,13 +65,13 @@ class BookingServiceImplIntegrationTest {
         bookingService.confirmationBooking(owner1.getId(), 2, false);
         bookingService.confirmationBooking(owner1.getId(), 3, false);
 
-        List<BookingDto> bookingDtoAll = bookingService.getAllBookingsByOwner(2, "ALL");
+        List<BookingDto> bookingDtoAll = bookingService.getAllBookingsByOwner(2, "ALL", 0, 0);
         assertEquals(3, bookingDtoAll.size());
-        List<BookingDto> bookingDtoApproved = bookingService.getAllBookingsByOwner(2, "APPROVED");
+        List<BookingDto> bookingDtoApproved = bookingService.getAllBookingsByOwner(2, "APPROVED", 0, 0);
         assertEquals(1, bookingDtoApproved.size());
-        List<BookingDto> bookingDtoRejected = bookingService.getAllBookingsByOwner(2, "REJECTED");
+        List<BookingDto> bookingDtoRejected = bookingService.getAllBookingsByOwner(2, "REJECTED", 0, 0);
         assertEquals(2, bookingDtoRejected.size());
-        List<BookingDto> bookingDtoCurrent = bookingService.getAllBookingsByOwner(2, "CURRENT");
+        List<BookingDto> bookingDtoCurrent = bookingService.getAllBookingsByOwner(2, "CURRENT", 0, 0);
         assertEquals(1, bookingDtoCurrent.size());
     }
 }
