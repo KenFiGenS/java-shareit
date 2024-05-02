@@ -1,8 +1,12 @@
 package ru.practicum.shareit.request.service;
 
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.exception.DataNotFound;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
@@ -19,6 +23,7 @@ import ru.practicum.shareit.user.userDto.UserMapper;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -37,9 +42,13 @@ public class ItemRequestServiceImpl implements ItemRequestService{
         return ItemRequestMapper.toItemRequestDto(itemRequestRepository.save(itemRequest), null);
     }
 
+    @SneakyThrows
     @Override
     public ItemRequestDto getRequestById(long userId, long requestId) {
-        userService.getUserById(userId);
+        List<User> allUser = userRepository.findAll();
+        Optional<User> user = allUser.stream().filter(user1 -> user1.getId() == userId)
+                .findFirst();
+        user.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден"));
         ItemRequest itemRequest = itemRequestRepository.getReferenceById(requestId);
         if (itemRequest == null) {
             throw new DataNotFound("ItemRequest под ID: " + requestId + " не найден");
@@ -57,6 +66,10 @@ public class ItemRequestServiceImpl implements ItemRequestService{
 
     @Override
     public List<ItemRequestDto> getRequestsByUser(long userId) {
+        List<User> allUser = userRepository.findAll();
+        Optional<User> user = allUser.stream().filter(user1 -> user1.getId() == userId)
+                .findFirst();
+        user.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден"));
         List<Item> allItem = itemRepository.findAll();
         return itemRequestRepository.findByRequesterId(userId).stream()
                 .map(itemRequest -> getItemRequestWithItem(itemRequest, allItem))
@@ -87,12 +100,14 @@ public class ItemRequestServiceImpl implements ItemRequestService{
             Pageable pageable = PageRequest.of(0, size);
             return itemRequestRepository.findAll(pageable).stream()
                     .map(itemRequest -> getItemRequestWithItem(itemRequest, allItem))
+                    .filter(itemRequestDto -> itemRequestDto.getRequester().getId() != userId)
                     .collect(Collectors.toList());
         }
         int currentPage = (int) Stream.iterate(0, n -> (n * from) == from, n -> n + 1).count()+1;
         Pageable pageable = PageRequest.of(currentPage, size);
         return itemRequestRepository.findAll(pageable).stream()
                 .map(itemRequest -> getItemRequestWithItem(itemRequest, allItem))
+                .filter(itemRequestDto -> itemRequestDto.getRequester().getId() != userId)
                 .collect(Collectors.toList());
     }
 

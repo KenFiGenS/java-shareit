@@ -8,6 +8,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.EntityNotFoundException;
 import java.lang.reflect.UndeclaredThrowableException;
@@ -54,7 +55,7 @@ public class ErrorHandlingControllerAdvice {
     @ExceptionHandler(UndeclaredThrowableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Violation bookingStatusNotFoundOnTransactional(UndeclaredThrowableException e) {
-        log.info("Запращиваемый BookingStatus не найден. Ошибка: {}", e.getMessage(), e);
+        log.info("Запрашиваемый BookingStatus не найден. Ошибка: {}", e.getMessage(), e);
         return new Violation("Unknown state: UNSUPPORTED_STATUS");
     }
 
@@ -69,6 +70,9 @@ public class ErrorHandlingControllerAdvice {
     @ResponseStatus(HttpStatus.OK)
     public List<Object> requestParameterException(MissingServletRequestParameterException e) {
         log.info("Получен статус 500 Internal Server Error {}", e.getMessage(), e);
+        if (e.getMessage().contains("approved")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Нет тела запроса");
+        }
         return List.of();
     }
 }

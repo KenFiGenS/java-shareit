@@ -46,7 +46,7 @@ public class ItemRequestController {
     public List<ItemRequestDto> getRequests(@RequestHeader(REQUEST_HEADER_NAME) long userId,
                                             @RequestParam int from,
                                             @RequestParam int size) {
-        log.info("Выполняется запрос страницы с индекса {}, размером {}", from, size);
+        log.info("Выполняется запрос страницы с индекса {}, размером {}, от пользователя {}", from, size, userId);
         return itemRequestService.getRequestsAll(userId, from, size);
     }
 }
