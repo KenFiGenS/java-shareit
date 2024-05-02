@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -62,5 +63,12 @@ public class ErrorHandlingControllerAdvice {
     public Violation onOthersException(Exception e) {
         log.info("Получен статус 500 Internal Server Error {}", e.getMessage(), e);
         return new Violation(e.getMessage());
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    @ResponseStatus(HttpStatus.OK)
+    public List<Object> requestParameterException(MissingServletRequestParameterException e) {
+        log.info("Получен статус 500 Internal Server Error {}", e.getMessage(), e);
+        return List.of();
     }
 }

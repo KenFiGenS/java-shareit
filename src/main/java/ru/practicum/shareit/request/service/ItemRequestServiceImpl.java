@@ -1,6 +1,7 @@
 package ru.practicum.shareit.request.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.DataNotFound;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -15,9 +16,11 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.userDto.UserMapper;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor
@@ -56,6 +59,39 @@ public class ItemRequestServiceImpl implements ItemRequestService{
     public List<ItemRequestDto> getRequestsByUser(long userId) {
         List<Item> allItem = itemRepository.findAll();
         return itemRequestRepository.findByRequesterId(userId).stream()
+                .map(itemRequest -> getItemRequestWithItem(itemRequest, allItem))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ItemRequestDto> getRequestsAll(long userId, int from, int size) {
+        if (from == 0 && size == 0) {
+            throw new IllegalArgumentException("Неверный индекс начального элемента и размера страницы");
+        }
+        if (from == 0 && size < 0) {
+            throw new IllegalArgumentException("Неверный размер страницы");
+        }
+        if (size <= 0) {
+            return List.of();
+        }
+        if (from < 0) {
+            throw new IllegalArgumentException("Неверный индекс начального элемента");
+        }
+        List<ItemRequest> allItemRequests = itemRequestRepository.findAll();
+        if (allItemRequests.isEmpty()) {
+           return List.of();
+        }
+
+        List<Item> allItem = itemRepository.findAll();
+        if (from == 0) {
+            Pageable pageable = PageRequest.of(0, size);
+            return itemRequestRepository.findAll(pageable).stream()
+                    .map(itemRequest -> getItemRequestWithItem(itemRequest, allItem))
+                    .collect(Collectors.toList());
+        }
+        int currentPage = (int) Stream.iterate(0, n -> (n * from) == from, n -> n + 1).count()+1;
+        Pageable pageable = PageRequest.of(currentPage, size);
+        return itemRequestRepository.findAll(pageable).stream()
                 .map(itemRequest -> getItemRequestWithItem(itemRequest, allItem))
                 .collect(Collectors.toList());
     }

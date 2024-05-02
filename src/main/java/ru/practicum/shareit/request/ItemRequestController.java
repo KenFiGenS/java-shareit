@@ -41,4 +41,12 @@ public class ItemRequestController {
         log.info("Выполняется запрос получения информации о всех ItemRequest пользователя под id: {}", userId);
         return itemRequestService.getRequestsByUser(userId);
     }
+
+    @GetMapping("/all")
+    public List<ItemRequestDto> getRequests(@RequestHeader(REQUEST_HEADER_NAME) long userId,
+                                            @RequestParam int from,
+                                            @RequestParam int size) {
+        log.info("Выполняется запрос страницы с индекса {}, размером {}", from, size);
+        return itemRequestService.getRequestsAll(userId, from, size);
+    }
 }
