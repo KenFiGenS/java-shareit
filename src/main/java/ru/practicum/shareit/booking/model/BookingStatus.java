@@ -3,6 +3,10 @@ package ru.practicum.shareit.booking.model;
 import java.util.Arrays;
 
 public enum BookingStatus {
+    ALL,
+    CURRENT,
+    FUTURE,
+    PAST,
     WAITING,
     APPROVED,
     REJECTED,

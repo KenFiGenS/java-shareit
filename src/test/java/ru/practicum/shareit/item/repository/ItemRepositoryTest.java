@@ -14,9 +14,9 @@ import java.util.List;
 class ItemRepositoryTest {
 
     @Autowired
-    ItemRepository itemRepository;
+    private ItemRepository itemRepository;
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Test
     void searchByNameAndDescriptionTest() {

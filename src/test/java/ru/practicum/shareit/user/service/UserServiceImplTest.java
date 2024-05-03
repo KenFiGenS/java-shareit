@@ -24,9 +24,9 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
-    UserService userService;
+    private UserService userService;
     @Mock
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @BeforeEach
     public void setUp() {
