@@ -114,7 +114,6 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> currentBookingList;
         if (state.equals("ALL") && from > 0) {
             int currentPage = from / size;
-            System.out.println(currentPage);
             Pageable pageable = PageRequest.of(currentPage, size);
             return bookingRepository.findByBookerIdOrderByStartDesc(userId, pageable).stream()
                     .map(BookingMapper::toBookingDto)

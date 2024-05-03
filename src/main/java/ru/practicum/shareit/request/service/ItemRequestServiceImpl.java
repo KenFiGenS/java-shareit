@@ -24,7 +24,6 @@ import ru.practicum.shareit.user.userDto.UserMapper;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor
@@ -93,7 +92,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         if (allItemRequests.isEmpty()) {
             return List.of();
         }
-
         List<Item> allItem = itemRepository.findAll();
         if (from == 0) {
             Pageable pageable = PageRequest.of(0, size);
@@ -102,7 +100,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                     .filter(itemRequestDto -> itemRequestDto.getRequester().getId() != userId)
                     .collect(Collectors.toList());
         }
-        int currentPage = (int) Stream.iterate(0, n -> (n * from) == from, n -> n + 1).count() + 1;
+        int currentPage = from / size;
         Pageable pageable = PageRequest.of(currentPage, size);
         return itemRequestRepository.findAll(pageable).stream()
                 .map(itemRequest -> getItemRequestWithItem(itemRequest, allItem))
