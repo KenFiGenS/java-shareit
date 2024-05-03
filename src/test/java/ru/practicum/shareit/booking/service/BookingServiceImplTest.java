@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoCreate;
 import ru.practicum.shareit.booking.model.Booking;
@@ -357,6 +360,17 @@ class BookingServiceImplTest {
 
         List<BookingDto> bookingDtoResult = bookingService.getAllBookingsByBooker(1, "ALL", 0, 20);
         assertEquals(3, bookingDtoResult.size());
+
+        Pageable pageRequest = PageRequest.of(1, 1);
+        List<Booking> allBookings = List.of(bookingFromFuture, bookingFromPast);
+        int start = (int) pageRequest.getOffset();
+        int end = Math.min((start + pageRequest.getPageSize()), allBookings.size());
+        List<Booking> pageContent = allBookings.subList(start, end);
+
+        when(bookingRepository.findByBookerIdOrderByStartDesc(anyLong(), any())).thenReturn(new PageImpl<>(pageContent, pageRequest, allBookings.size()));
+
+        bookingDtoResult = bookingService.getAllBookingsByBooker(1, "ALL", 1, 1);
+        assertEquals(1, bookingDtoResult.size());
     }
 
     @Test
@@ -460,6 +474,25 @@ class BookingServiceImplTest {
 
         List<BookingDto> bookingDtoResult = bookingService.getAllBookingsByBooker(1, "APPROVED", 0, 20);
         assertEquals(3, bookingDtoResult.size());
+
+    }
+
+    @Test
+    void getAllBookingsByBookerTestThrowIllegalArgumentExceptionSizeAndFromIsZero() {
+        assertThrows(IllegalArgumentException.class,
+                () -> bookingService.getAllBookingsByBooker(1, "ALL", 0, 0));
+    }
+
+    @Test
+    void getAllBookingsByBookerTestThrowIllegalArgumentExceptionSizeIsNegativeAndFromIsZero() {
+        assertThrows(IllegalArgumentException.class,
+                () -> bookingService.getAllBookingsByBooker(1, "ALL", 0, -1));
+    }
+
+    @Test
+    void getAllBookingsByBookerTestThrowIllegalArgumentExceptionFromIsNegative() {
+        assertThrows(IllegalArgumentException.class,
+                () -> bookingService.getAllBookingsByBooker(1, "ALL", -1, 5));
     }
 
     @Test
@@ -507,6 +540,17 @@ class BookingServiceImplTest {
 
         List<BookingDto> bookingDtoResult = bookingService.getAllBookingsByOwner(1, "ALL", 0, 5);
         assertEquals(3, bookingDtoResult.size());
+
+        Pageable pageRequest = PageRequest.of(1, 1);
+        List<Booking> allBookings = List.of(bookingFromFuture, bookingFromPast);
+        int start = (int) pageRequest.getOffset();
+        int end = Math.min((start + pageRequest.getPageSize()), allBookings.size());
+        List<Booking> pageContent = allBookings.subList(start, end);
+
+        when(bookingRepository.findByItemOwnerIdOrderByStartDesc(anyLong(), any())).thenReturn(new PageImpl<>(pageContent, pageRequest, allBookings.size()));
+
+        bookingDtoResult = bookingService.getAllBookingsByOwner(1, "ALL", 1, 1);
+        assertEquals(1, bookingDtoResult.size());
     }
 
     @Test
@@ -609,6 +653,24 @@ class BookingServiceImplTest {
 
         List<BookingDto> bookingDtoResult = bookingService.getAllBookingsByOwner(1, "APPROVED", 0, 5);
         assertEquals(3, bookingDtoResult.size());
+    }
+
+    @Test
+    void getAllBookingsByOwnerTestThrowIllegalArgumentExceptionSizeAndFromIsZero() {
+        assertThrows(IllegalArgumentException.class,
+                () -> bookingService.getAllBookingsByOwner(1, "ALL", 0, 0));
+    }
+
+    @Test
+    void getAllBookingsByOwnerTestThrowIllegalArgumentExceptionSizeIsNegativeAndFromIsZero() {
+        assertThrows(IllegalArgumentException.class,
+                () -> bookingService.getAllBookingsByOwner(1, "ALL", 0, -1));
+    }
+
+    @Test
+    void getAllBookingsByOwnerTestThrowIllegalArgumentExceptionFromIsNegative() {
+        assertThrows(IllegalArgumentException.class,
+                () -> bookingService.getAllBookingsByOwner(1, "ALL", -1, 5));
     }
 
     @Test

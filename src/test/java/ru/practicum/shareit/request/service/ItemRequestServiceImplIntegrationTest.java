@@ -5,11 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.web.server.ResponseStatusException;
-import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
-import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.userDto.UserDto;
 import ru.practicum.shareit.user.userDto.UserMapper;
@@ -84,7 +81,7 @@ class ItemRequestServiceImplIntegrationTest {
                 () -> itemRequestService.getRequestsAll(1, 0, 0));
         assertThrows(IllegalArgumentException.class,
                 () -> itemRequestService.getRequestsAll(1, 0, -1));
-        itemRequestDtoFromRepository =  itemRequestService.getRequestsAll(1, 1, -1);
+        itemRequestDtoFromRepository = itemRequestService.getRequestsAll(1, 1, -1);
         assertEquals(0, itemRequestDtoFromRepository.size());
         assertThrows(IllegalArgumentException.class,
                 () -> itemRequestService.getRequestsAll(1, -1, 5));

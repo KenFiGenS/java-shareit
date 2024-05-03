@@ -42,17 +42,6 @@ public class ItemMapper {
         );
     }
 
-    public ItemDtoWithBooking itemDtoWithBooking(Item item, BookingDtoItemById last, BookingDtoItemById next) {
-        return new ItemDtoWithBooking(
-                item.getId(),
-                item.getName(),
-                item.getDescription(),
-                item.getAvailable(),
-                last,
-                next
-        );
-    }
-
     public ItemDtoWithBookingAndComments itemDtoWithBookingAndComments(Item item,
                                                                        BookingDtoItemById last,
                                                                        BookingDtoItemById next,
