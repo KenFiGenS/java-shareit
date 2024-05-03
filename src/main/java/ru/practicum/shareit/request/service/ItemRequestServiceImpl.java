@@ -3,9 +3,9 @@ package ru.practicum.shareit.request.service;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.exception.DataNotFound;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -20,7 +20,6 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.userDto.UserMapper;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +28,7 @@ import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor
-public class ItemRequestServiceImpl implements ItemRequestService{
+public class ItemRequestServiceImpl implements ItemRequestService {
     private UserService userService;
     private ItemRequestRepository itemRequestRepository;
     private ItemRepository itemRepository;
@@ -92,7 +91,7 @@ public class ItemRequestServiceImpl implements ItemRequestService{
         }
         List<ItemRequest> allItemRequests = itemRequestRepository.findAll();
         if (allItemRequests.isEmpty()) {
-           return List.of();
+            return List.of();
         }
 
         List<Item> allItem = itemRepository.findAll();
@@ -103,7 +102,7 @@ public class ItemRequestServiceImpl implements ItemRequestService{
                     .filter(itemRequestDto -> itemRequestDto.getRequester().getId() != userId)
                     .collect(Collectors.toList());
         }
-        int currentPage = (int) Stream.iterate(0, n -> (n * from) == from, n -> n + 1).count()+1;
+        int currentPage = (int) Stream.iterate(0, n -> (n * from) == from, n -> n + 1).count() + 1;
         Pageable pageable = PageRequest.of(currentPage, size);
         return itemRequestRepository.findAll(pageable).stream()
                 .map(itemRequest -> getItemRequestWithItem(itemRequest, allItem))

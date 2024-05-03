@@ -29,6 +29,7 @@ class BookingServiceImplIntegrationTest {
     @Autowired
     private BookingRepository bookingRepository;
 
+
     @Test
     @DirtiesContext
     void getAllBookingsByOwner() {
@@ -41,6 +42,7 @@ class BookingServiceImplIntegrationTest {
         long itemId1 = itemRepository.save(itemForBooking1).getId();
         itemRepository.save(itemForBooking2);
         itemRepository.save(itemForBooking3);
+
 
         bookingService.createBooking(booker.getId(), new BookingDtoCreate(
                 0L,
@@ -65,13 +67,13 @@ class BookingServiceImplIntegrationTest {
         bookingService.confirmationBooking(owner1.getId(), 2, false);
         bookingService.confirmationBooking(owner1.getId(), 3, false);
 
-        List<BookingDto> bookingDtoAll = bookingService.getAllBookingsByOwner(2, "ALL", 0, 0);
+        List<BookingDto> bookingDtoAll = bookingService.getAllBookingsByOwner(2, "ALL", 0, 5);
         assertEquals(3, bookingDtoAll.size());
-        List<BookingDto> bookingDtoApproved = bookingService.getAllBookingsByOwner(2, "APPROVED", 0, 0);
+        List<BookingDto> bookingDtoApproved = bookingService.getAllBookingsByOwner(2, "APPROVED", 0, 5);
         assertEquals(1, bookingDtoApproved.size());
-        List<BookingDto> bookingDtoRejected = bookingService.getAllBookingsByOwner(2, "REJECTED", 0, 0);
+        List<BookingDto> bookingDtoRejected = bookingService.getAllBookingsByOwner(2, "REJECTED", 0, 5);
         assertEquals(2, bookingDtoRejected.size());
-        List<BookingDto> bookingDtoCurrent = bookingService.getAllBookingsByOwner(2, "CURRENT", 0, 0);
+        List<BookingDto> bookingDtoCurrent = bookingService.getAllBookingsByOwner(2, "CURRENT", 0, 5);
         assertEquals(1, bookingDtoCurrent.size());
     }
 }

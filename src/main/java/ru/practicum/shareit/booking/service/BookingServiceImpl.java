@@ -26,7 +26,6 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -114,7 +113,7 @@ public class BookingServiceImpl implements BookingService {
         LocalDateTime currentTime = LocalDateTime.now();
         List<Booking> currentBookingList;
         if (state.equals("ALL") && from > 0) {
-            int currentPage = from/size;
+            int currentPage = from / size;
             System.out.println(currentPage);
             Pageable pageable = PageRequest.of(currentPage, size);
             return bookingRepository.findByBookerIdOrderByStartDesc(userId, pageable).stream()
@@ -163,7 +162,7 @@ public class BookingServiceImpl implements BookingService {
         LocalDateTime currentTime = LocalDateTime.now();
         List<Booking> currentBookingList;
         if (state.equals("ALL") && from > 0) {
-            int currentPage = from/size;
+            int currentPage = from / size;
             System.out.println(currentPage);
             Pageable pageable = PageRequest.of(currentPage, size);
             return bookingRepository.findByItemOwnerIdOrderByStartDesc(userId, pageable).stream()
