@@ -2,6 +2,9 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoCreate;
@@ -18,11 +21,13 @@ import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.userDto.UserMapper;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class BookingServiceImpl implements BookingService {
@@ -31,6 +36,7 @@ public class BookingServiceImpl implements BookingService {
     private UserService userService;
 
     @Override
+    @Transactional
     public BookingDto createBooking(long userId, BookingDtoCreate bookingDto) {
         if (bookingDto.getStart().isAfter(bookingDto.getEnd()) ||
                 bookingDto.getStart().equals(bookingDto.getEnd())) {
@@ -44,7 +50,7 @@ public class BookingServiceImpl implements BookingService {
                 });
         User currentUser = UserMapper.toUser(userService.getUserById(userId));
         Item currentItem = itemRepository.getReferenceById(bookingDto.getItemId());
-        if (currentItem.getOwner().getId() == userId) {
+        if (currentItem.getOwner().getId() == currentUser.getId()) {
             throw new DataNotFound("Нельзя забронировать свою же вещь");
         }
         if (!currentItem.getAvailable()) {
@@ -55,6 +61,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public BookingDto confirmationBooking(long userId, long bookingId, boolean approved) {
         Booking currentBooking = bookingRepository.getReferenceById(bookingId);
         Item currentItem = currentBooking.getItem();
@@ -79,6 +86,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public BookingDto getBookingById(long userId, long bookingId) {
         Booking currentBooking = bookingRepository.getReferenceById(bookingId);
         Item currentItem = currentBooking.getItem();
@@ -90,28 +98,43 @@ public class BookingServiceImpl implements BookingService {
 
     @SneakyThrows
     @Override
-    public List<BookingDto> getAllBookingsByBooker(long userId, String state) {
+    @Transactional
+    public List<BookingDto> getAllBookingsByBooker(long userId, String state, int from, int size) {
         userService.getUserById(userId);
+        if (from == 0 && size == 0) {
+            throw new IllegalArgumentException("Неверный индекс начального элемента и размера страницы");
+        }
+        if (size <= 0) {
+            throw new IllegalArgumentException("Неверный индекс размера страницы");
+        }
+        if (from < 0) {
+            throw new IllegalArgumentException("Неверный индекс начального элемента");
+        }
+        if (!BookingStatus.isInEnum(state, BookingStatus.class)) {
+            throw new NotFoundBookingStatusException("Unknown state: " + state);
+        }
         LocalDateTime currentTime = LocalDateTime.now();
         List<Booking> currentBookingList;
-        if (state.equals("ALL")) {
+        if (BookingStatus.valueOf(state) == BookingStatus.ALL && from > 0) {
+            int currentPage = from / size;
+            Pageable pageable = PageRequest.of(currentPage, size);
+            return bookingRepository.findByBookerIdOrderByStartDesc(userId, pageable).stream()
+                    .map(BookingMapper::toBookingDto)
+                    .collect(Collectors.toList());
+        }
+        if (BookingStatus.valueOf(state) == BookingStatus.ALL) {
             currentBookingList = bookingRepository.findByBookerId(userId);
-        } else if (state.equals("CURRENT")) {
+        } else if (BookingStatus.valueOf(state) == BookingStatus.CURRENT) {
             currentBookingList = bookingRepository.findByBookerIdAndStartIsBeforeAndEndIsAfter(
                     userId,
                     currentTime,
                     currentTime);
-        } else if (state.equals("FUTURE")) {
+        } else if (BookingStatus.valueOf(state) == BookingStatus.FUTURE) {
             currentBookingList = bookingRepository.findByBookerIdAndStartIsAfter(userId, currentTime);
-        } else if (state.equals("PAST")) {
+        } else if (BookingStatus.valueOf(state) == BookingStatus.PAST) {
             currentBookingList = bookingRepository.findByBookerIdAndEndIsBefore(userId, currentTime);
         } else {
-            if (BookingStatus.isInEnum(state, BookingStatus.class)) {
-                currentBookingList = bookingRepository.findByBookerIdAndStatus(userId, BookingStatus.valueOf(state));
-            } else {
-                throw new NotFoundBookingStatusException("Unknown state: " + state);
-            }
-
+            currentBookingList = bookingRepository.findByBookerIdAndStatus(userId, BookingStatus.valueOf(state));
         }
         return currentBookingList.stream()
                 .sorted(Comparator.comparing(Booking::getStart).reversed())
@@ -121,39 +144,48 @@ public class BookingServiceImpl implements BookingService {
 
     @SneakyThrows
     @Override
-    public List<BookingDto> getAllBookingsByOwner(long userId, String state) {
+    @Transactional
+    public List<BookingDto> getAllBookingsByOwner(long userId, String state, int from, int size) {
         userService.getUserById(userId);
+        if (from == 0 && size == 0) {
+            throw new IllegalArgumentException("Неверный индекс начального элемента и размера страницы");
+        }
+        if (size <= 0) {
+            throw new IllegalArgumentException("Неверный индекс размера страницы");
+        }
+        if (from < 0) {
+            throw new IllegalArgumentException("Неверный индекс начального элемента");
+        }
+        if (!BookingStatus.isInEnum(state, BookingStatus.class)) {
+            throw new NotFoundBookingStatusException("Unknown state: " + state);
+        }
         LocalDateTime currentTime = LocalDateTime.now();
         List<Booking> currentBookingList;
-        if (state.equals("ALL")) {
+        if (BookingStatus.valueOf(state) == BookingStatus.ALL && from > 0) {
+            int currentPage = from / size;
+            System.out.println(currentPage);
+            Pageable pageable = PageRequest.of(currentPage, size);
+            return bookingRepository.findByItemOwnerIdOrderByStartDesc(userId, pageable).stream()
+                    .map(BookingMapper::toBookingDto)
+                    .collect(Collectors.toList());
+        }
+        if (BookingStatus.valueOf(state) == BookingStatus.ALL) {
             currentBookingList = bookingRepository.findByItemOwnerId(userId);
-        } else if (state.equals("CURRENT")) {
+        } else if (BookingStatus.valueOf(state) == BookingStatus.CURRENT) {
             currentBookingList = bookingRepository.findByItemOwnerIdAndStartIsBeforeAndEndIsAfter(
                     userId,
                     currentTime,
                     currentTime);
-        } else if (state.equals("FUTURE")) {
+        } else if (BookingStatus.valueOf(state) == BookingStatus.FUTURE) {
             currentBookingList = bookingRepository.findByItemOwnerIdAndStartIsAfter(userId, currentTime);
-        } else if (state.equals("PAST")) {
+        } else if (BookingStatus.valueOf(state) == BookingStatus.PAST) {
             currentBookingList = bookingRepository.findByItemOwnerIdAndEndIsBefore(userId, currentTime);
         } else {
-            if (BookingStatus.isInEnum(state, BookingStatus.class)) {
-                currentBookingList = bookingRepository.findByItemOwnerIdAndStatus(userId, BookingStatus.valueOf(state));
-            } else {
-                throw new NotFoundBookingStatusException("Unknown state: " + state);
-            }
+            currentBookingList = bookingRepository.findByItemOwnerIdAndStatus(userId, BookingStatus.valueOf(state));
         }
         return currentBookingList.stream()
                 .sorted(Comparator.comparing(Booking::getStart).reversed())
                 .map(BookingMapper::toBookingDto)
                 .collect(Collectors.toList());
     }
-
-    @Override
-    public BookingDto getAllBooking() {
-
-        return null;
-    }
-
-
 }

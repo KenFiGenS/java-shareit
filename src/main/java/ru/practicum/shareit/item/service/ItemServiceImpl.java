@@ -17,10 +17,13 @@ import ru.practicum.shareit.item.dto.ItemDtoWithBookingAndComments;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.userDto.UserMapper;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -33,33 +36,43 @@ public class ItemServiceImpl implements ItemService {
     private final UserService userService;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
 
     @SneakyThrows
     @Override
+    @Transactional
     public ItemDto createItem(long userId, ItemDto itemDto) {
-        User cuttentUser = UserMapper.toUser(userService.getUserById(userId));
-        Item item = ItemMapper.toItem(itemDto, cuttentUser);
-        item.setOwner(cuttentUser);
+        User currentUser = UserMapper.toUser(userService.getUserById(userId));
+        Item item;
+        if (itemDto.getRequestId() == 0) {
+            item = ItemMapper.toItem(itemDto, currentUser, null);
+        } else {
+            ItemRequest itemRequest = itemRequestRepository.getReferenceById(itemDto.getRequestId());
+            item = ItemMapper.toItem(itemDto, currentUser, itemRequest);
+        }
         Item itemAfterCreate = itemRepository.save(item);
         return ItemMapper.toItemDto(itemAfterCreate);
     }
 
     @SneakyThrows
     @Override
+    @Transactional
     public ItemDto updateItem(long userId, long id, ItemDto itemDto) {
         Item itemForUpdate = itemRepository.getReferenceById(id);
-        if (itemForUpdate.getOwner().getId() != userId) {
+        if (itemForUpdate == null || itemForUpdate.getOwner().getId() != userId) {
             throw new DataNotFound("У данного пользователя нет вещи под ID: " + id);
         }
         if (itemDto.getName() != null && !itemDto.getName().isBlank()) itemForUpdate.setName(itemDto.getName());
         if (itemDto.getDescription() != null && !itemDto.getDescription().isBlank())
             itemForUpdate.setDescription(itemDto.getDescription());
         if (itemDto.getAvailable() != null) itemForUpdate.setAvailable(itemDto.getAvailable());
+        if (itemDto.getRequestId() > 0) itemForUpdate.setItemRequest(itemRequestRepository.getReferenceById(itemDto.getRequestId()));
         Item itemAfterUpdate = itemRepository.save(itemForUpdate);
         return ItemMapper.toItemDto(itemAfterUpdate);
     }
 
     @Override
+    @Transactional
     public ItemDtoWithBookingAndComments getItemById(long userId, long id) {
         LocalDateTime currentTime = LocalDateTime.now();
         List<Booking> bookingsById = bookingRepository.findByItemId(id);
@@ -90,16 +103,18 @@ public class ItemServiceImpl implements ItemService {
         if (nextBooking != null && !nextBooking.getStatus().equals(BookingStatus.REJECTED)) {
             nextBookingDto = BookingMapper.bookingDtoItemByIdDtoItem(nextBooking);
         }
-        List<CommentDto> comments = commentRepository.findAllByItemId(id).stream()
-                .map(CommentMapper::toCommentDto)
-                .collect(Collectors.toList());
+        List<CommentDto> commentsDto = commentRepository.findAllByItemId(id).stream()
+                    .map(CommentMapper::toCommentDto)
+                    .collect(Collectors.toList());
+
         return ItemMapper.itemDtoWithBookingAndComments(currentItem,
                 lastBookingDto,
                 nextBookingDto,
-                comments);
+                commentsDto);
     }
 
     @Override
+    @Transactional
     public List<ItemDtoWithBookingAndComments> getAllItemByOwner(long userId) {
         List<Item> itemsByOwner = itemRepository.findItemByOwnerId(userId);
         return itemsByOwner.stream().map(item -> getItemById(userId, item.getId()))
@@ -108,6 +123,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public List<ItemDto> search(String text) {
         if (text.isBlank()) {
             return List.of();
@@ -121,6 +137,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public CommentDto createComment(long userId, long itemId, CommentDto commentDto) {
         LocalDateTime currentTime = LocalDateTime.now();
         User cuttentUser = UserMapper.toUser(userService.getUserById(userId));
