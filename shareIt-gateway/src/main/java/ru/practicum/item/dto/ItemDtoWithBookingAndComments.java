@@ -5,7 +5,6 @@ import lombok.Data;
 import ru.practicum.booking.dto.BookingDtoItemById;
 import ru.practicum.comment.dto.CommentDto;
 
-
 import java.util.List;
 
 @Data

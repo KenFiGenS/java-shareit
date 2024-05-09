@@ -24,8 +24,6 @@ import ru.practicum.shareit.item.service.ItemService;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.hamcrest.Matchers.is;
-
 @WebMvcTest(controllers = ItemController.class)
 class ItemControllerTest {
     @Autowired

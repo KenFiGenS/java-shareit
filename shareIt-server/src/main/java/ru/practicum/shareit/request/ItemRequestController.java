@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.constans.Constants;
-import ru.practicum.shareit.exception.Marker;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.service.ItemRequestService;
 
@@ -23,7 +22,7 @@ public class ItemRequestController {
 
     @PostMapping
     public ItemRequestDto createRequest(@RequestHeader(Constants.REQUEST_HEADER_NAME) long userId,
-                                        @Validated(Marker.OnCreate.class) @RequestBody ItemRequestDto itemRequestDto) {
+                                        @RequestBody ItemRequestDto itemRequestDto) {
         log.info("Выполняется запрос создания нового ItemRequest");
         return itemRequestService.createItemRequest(userId, itemRequestDto);
     }

@@ -20,9 +20,6 @@ import ru.practicum.shareit.user.model.User;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-
 @WebMvcTest(controllers = ItemRequestController.class)
 class ItemRequestControllerTest {
     @Autowired
@@ -48,19 +45,6 @@ class ItemRequestControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(itemRequestAfter)));
-    }
-
-    @SneakyThrows
-    @Test
-    void createRequestTestThrowException() {
-        ItemRequestDto itemRequestBefore = new ItemRequestDto(0, null, null, null, null);
-
-        mockMvc.perform((MockMvcRequestBuilders.post("/requests"))
-                        .content(objectMapper.writeValueAsString(itemRequestBefore))
-                        .header(Constants.REQUEST_HEADER_NAME, 1)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @SneakyThrows

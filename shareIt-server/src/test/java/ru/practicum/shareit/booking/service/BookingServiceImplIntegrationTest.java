@@ -17,8 +17,6 @@ import ru.practicum.shareit.user.userDto.UserMapper;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @SpringBootTest
 class BookingServiceImplIntegrationTest {
     @Autowired

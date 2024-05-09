@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-import ru.practicum.booking.dto.BookingDtoCreate;
 import ru.practicum.exception.DataNotFound;
 import ru.practicum.request.dto.ItemRequestDto;
 

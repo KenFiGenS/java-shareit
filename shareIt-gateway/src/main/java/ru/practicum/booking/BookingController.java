@@ -9,7 +9,6 @@ import ru.practicum.booking.dto.BookingDtoCreate;
 import ru.practicum.constans.Constants;
 import ru.practicum.exception.Marker;
 
-
 import java.util.List;
 
 @Slf4j
@@ -44,8 +43,8 @@ public class BookingController {
 
     @GetMapping
     public List<BookingDto> getAllBookingsByBooker(@RequestHeader(Constants.REQUEST_HEADER_NAME) long userId,
-                                                   @RequestParam (defaultValue = "0") int from,
-                                                   @RequestParam (defaultValue = "5") int size,
+                                                   @RequestParam(defaultValue = "0") int from,
+                                                   @RequestParam(defaultValue = "5") int size,
                                                    @RequestParam(defaultValue = "ALL") String state) {
         log.info("Выполняется запрос на получение всех бронирований от пользователя под ID: {}, со статусом: {}", userId, state);
         return bookingClient.getAllBookingsByBooker(userId, state, from, size);
@@ -53,8 +52,8 @@ public class BookingController {
 
     @GetMapping("/owner")
     public List<BookingDto> getAllBookingByOwner(@RequestHeader(Constants.REQUEST_HEADER_NAME) long userId,
-                                                 @RequestParam (defaultValue = "0") int from,
-                                                 @RequestParam (defaultValue = "5") int size,
+                                                 @RequestParam(defaultValue = "0") int from,
+                                                 @RequestParam(defaultValue = "5") int size,
                                                  @RequestParam(defaultValue = "ALL") String state) {
         log.info("Выполняется запрос на получение всех бронирований от владельца под ID: {}, со статусом: {}", userId, state);
         return bookingClient.getAllBookingsByOwner(userId, state, from, size);

@@ -2,13 +2,11 @@ package ru.practicum.shareit.booking;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingDtoCreate;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.constans.Constants;
-import ru.practicum.shareit.exception.Marker;
-import ru.practicum.shareit.booking.dto.BookingDtoCreate;
 
 import java.util.List;
 
@@ -21,7 +19,7 @@ public class BookingController {
 
     @PostMapping
     public BookingDto createBooking(@RequestHeader(Constants.REQUEST_HEADER_NAME) long userId,
-                                    @Validated({Marker.OnCreate.class}) @RequestBody BookingDtoCreate bookingDto) {
+                                    @RequestBody BookingDtoCreate bookingDto) {
         log.info("Выполняется запрос на бронирование вещи под ID: {} от пользователя под ID: {}", bookingDto.getId(), userId);
         return bookingService.createBooking(userId, bookingDto);
     }
@@ -43,8 +41,8 @@ public class BookingController {
 
     @GetMapping
     public List<BookingDto> getAllBookingsByBooker(@RequestHeader(Constants.REQUEST_HEADER_NAME) long userId,
-                                                   @RequestParam (defaultValue = "0") int from,
-                                                   @RequestParam (defaultValue = "5") int size,
+                                                   @RequestParam(defaultValue = "0") int from,
+                                                   @RequestParam(defaultValue = "5") int size,
                                                    @RequestParam(defaultValue = "ALL") String state) {
         log.info("Выполняется запрос на получение всех бронирований от пользователя под ID: {}, со статусом: {}", userId, state);
         return bookingService.getAllBookingsByBooker(userId, state, from, size);
@@ -52,8 +50,8 @@ public class BookingController {
 
     @GetMapping("/owner")
     public List<BookingDto> getAllBookingByOwner(@RequestHeader(Constants.REQUEST_HEADER_NAME) long userId,
-                                                 @RequestParam (defaultValue = "0") int from,
-                                                 @RequestParam (defaultValue = "5") int size,
+                                                 @RequestParam(defaultValue = "0") int from,
+                                                 @RequestParam(defaultValue = "5") int size,
                                                  @RequestParam(defaultValue = "ALL") String state) {
         log.info("Выполняется запрос на получение всех бронирований от владельца под ID: {}, со статусом: {}", userId, state);
         return bookingService.getAllBookingsByOwner(userId, state, from, size);

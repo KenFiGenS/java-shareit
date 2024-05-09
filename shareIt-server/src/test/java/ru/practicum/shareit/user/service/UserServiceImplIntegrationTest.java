@@ -7,8 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.user.userDto.UserDto;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 
 @SpringBootTest
 class UserServiceImplIntegrationTest {

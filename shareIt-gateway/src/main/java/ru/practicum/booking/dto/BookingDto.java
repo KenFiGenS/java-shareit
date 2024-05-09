@@ -3,12 +3,9 @@ package ru.practicum.booking.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import ru.practicum.booking.model.BookingStatus;
-
 import ru.practicum.item.dto.ItemDto;
 import ru.practicum.user.userDto.UserDto;
-
 
 import java.time.LocalDateTime;
 

@@ -82,11 +82,11 @@ public class ItemClient {
         headers.setAccept(List.of(MediaType.APPLICATION_JSON));
         headers.setContentType(MediaType.APPLICATION_JSON);
         if (userId == 0) {
-            return  new HttpEntity<>(headers);
+            return new HttpEntity<>(headers);
         }
         headers.set(REQUEST_HEADER_NAME, String.valueOf(userId));
         if (itemDto == null) {
-            return  new HttpEntity<>(headers);
+            return new HttpEntity<>(headers);
         }
         return new HttpEntity<>(itemDto, headers);
     }

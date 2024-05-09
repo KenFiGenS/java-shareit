@@ -20,9 +20,9 @@ public class UserClient {
 
     public UserClient(@Value("${shareIt-server.url}") String serverUrl, RestTemplateBuilder builder) {
         this.restTemplate = builder
-                        .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))
-                        .requestFactory(HttpComponentsClientHttpRequestFactory::new)
-                        .build();
+                .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))
+                .requestFactory(HttpComponentsClientHttpRequestFactory::new)
+                .build();
 
     }
 
@@ -42,7 +42,7 @@ public class UserClient {
         return restTemplate.patchForObject("/" + userId, body, UserDto.class);
     }
 
-    protected void delete( long userId) {
+    protected void delete(long userId) {
         restTemplate.delete("/" + userId);
     }
 

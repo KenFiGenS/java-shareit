@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.exception.Marker;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.userDto.UserDto;
 
@@ -19,14 +18,14 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public UserDto createUser(@Validated({Marker.OnCreate.class}) @RequestBody UserDto userDto) {
+    public UserDto createUser(@RequestBody UserDto userDto) {
         log.info("Выполняется запрос на создание пользователя");
         return userService.create(userDto);
     }
 
     @PatchMapping("/{id}")
     public UserDto updateUser(@PathVariable long id,
-                              @Validated({Marker.OnUpdate.class}) @RequestBody UserDto userDto) {
+                              @RequestBody UserDto userDto) {
         log.info("Выполняется запрос обновления пользователя под ID: {}", id);
         return userService.patch(id, userDto);
     }

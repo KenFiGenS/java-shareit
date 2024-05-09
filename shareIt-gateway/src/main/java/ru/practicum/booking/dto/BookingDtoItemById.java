@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.booking.model.BookingStatus;
 
-
 import java.time.LocalDateTime;
 
 @Data

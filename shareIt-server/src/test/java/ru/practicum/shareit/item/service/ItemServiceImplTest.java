@@ -28,8 +28,6 @@ import ru.practicum.shareit.user.userDto.UserMapper;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.mockito.Mockito.verify;
-
 @ExtendWith(MockitoExtension.class)
 class ItemServiceImplTest {
     ItemService itemService;
@@ -337,9 +335,9 @@ class ItemServiceImplTest {
         Mockito.when(userService.getUserById(ArgumentMatchers.anyLong())).thenReturn(userDto);
         Mockito.when(itemRepository.getReferenceById(ArgumentMatchers.anyLong())).thenReturn(itemForComment);
         Mockito.when(bookingRepository.findByBookerIdAndItemIdAndEndIsBefore(
-                ArgumentMatchers.anyLong(),
-                ArgumentMatchers.anyLong(),
-                ArgumentMatchers.any()))
+                        ArgumentMatchers.anyLong(),
+                        ArgumentMatchers.anyLong(),
+                        ArgumentMatchers.any()))
                 .thenReturn(bookingsFromRepository);
         Mockito.when(commentRepository.save(ArgumentMatchers.any())).thenReturn(comment);
 
@@ -358,9 +356,9 @@ class ItemServiceImplTest {
         Mockito.when(userService.getUserById(ArgumentMatchers.anyLong())).thenReturn(userDto);
         Mockito.when(itemRepository.getReferenceById(ArgumentMatchers.anyLong())).thenReturn(itemForComment);
         Mockito.when(bookingRepository.findByBookerIdAndItemIdAndEndIsBefore(
-                ArgumentMatchers.anyLong(),
-                ArgumentMatchers.anyLong(),
-                ArgumentMatchers.any()))
+                        ArgumentMatchers.anyLong(),
+                        ArgumentMatchers.anyLong(),
+                        ArgumentMatchers.any()))
                 .thenReturn(List.of());
 
         Assertions.assertThrows(IllegalArgumentException.class,

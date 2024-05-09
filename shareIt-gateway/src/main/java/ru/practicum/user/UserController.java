@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.exception.Marker;
 import ru.practicum.user.userDto.UserDto;
 
-
 import java.util.List;
 
 @Slf4j

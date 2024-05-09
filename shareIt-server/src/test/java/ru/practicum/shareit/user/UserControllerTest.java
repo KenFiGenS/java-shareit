@@ -19,10 +19,6 @@ import ru.practicum.shareit.user.userDto.UserDto;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-
 @WebMvcTest(controllers = UserController.class)
 class UserControllerTest {
     @Autowired

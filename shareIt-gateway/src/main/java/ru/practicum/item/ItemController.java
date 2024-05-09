@@ -9,7 +9,6 @@ import ru.practicum.exception.Marker;
 import ru.practicum.item.dto.ItemDto;
 import ru.practicum.item.dto.ItemDtoWithBookingAndComments;
 
-
 import java.util.List;
 
 import static ru.practicum.constans.Constants.REQUEST_HEADER_NAME;

@@ -6,7 +6,6 @@ import ru.practicum.exception.Marker;
 import ru.practicum.item.dto.ItemDto;
 import ru.practicum.user.model.User;
 
-
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.List;

@@ -75,24 +75,6 @@ class BookingControllerTest {
 
     @SneakyThrows
     @Test
-    void createBookingTestValidationMethodArgumentNotValidException() {
-        BookingDto bookingDto = getBookingForTest().get(0);
-        BookingDtoCreate bookingDtoForCreate = new BookingDtoCreate(
-                0,
-                bookingDto.getStart(),
-                bookingDto.getEnd(),
-                1);
-
-        mockMvc.perform((MockMvcRequestBuilders.post("/bookings"))
-                        .content(objectMapper.writeValueAsString(bookingDtoForCreate))
-                        .header(Constants.REQUEST_HEADER_NAME, 1)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
-    }
-
-    @SneakyThrows
-    @Test
     void confirmationBookingTest() {
         BookingDto bookingDto = getBookingForTest().get(1);
 
