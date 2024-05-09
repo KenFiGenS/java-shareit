@@ -31,7 +31,6 @@ public class ItemClient {
                 .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))
                 .requestFactory(HttpComponentsClientHttpRequestFactory::new)
                 .build();
-
     }
 
     public ItemDto create(long userId, ItemDto item) {

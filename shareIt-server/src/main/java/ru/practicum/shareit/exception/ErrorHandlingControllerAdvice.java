@@ -48,7 +48,7 @@ public class ErrorHandlingControllerAdvice {
 
     @ExceptionHandler(NotFoundBookingStatusException.class)
     public ResponseEntity<Violation> bookingStatusNotFound(NotFoundBookingStatusException e) {
-        log.info("Запращиваемый BookingStatus не найден. Ошибка: {}", e.getMessage(), e);
+        log.info("Запрашиваемый BookingStatus не найден. Ошибка: {}", e.getMessage(), e);
         return new ResponseEntity<>(new Violation(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
