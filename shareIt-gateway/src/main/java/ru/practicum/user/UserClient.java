@@ -4,10 +4,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.user.userDto.UserDto;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Component
@@ -25,7 +27,11 @@ public class UserClient {
     }
 
     protected UserDto get(long userId) {
+        try {
             return restTemplate.getForEntity("/" + userId, UserDto.class).getBody();
+        } catch (HttpStatusCodeException e) {
+            throw new EntityNotFoundException(e.getMessage());
+        }
     }
 
     protected UserDto post(UserDto body) {

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.persistence.EntityNotFoundException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,6 +35,13 @@ public class ErrorHandlingControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Violation onServiceArgumentNotValidException(IllegalArgumentException e) {
         log.info("Получен статус 400 Conflict {}", e.getMessage(), e);
+        return new Violation(e.getMessage());
+    }
+
+    @ExceptionHandler({EntityNotFoundException.class, DataNotFound.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Violation onServiceArgumentNotValidException(RuntimeException e) {
+        log.info("Получен статус 404 Not Found {}", e.getMessage(), e);
         return new Violation(e.getMessage());
     }
 
