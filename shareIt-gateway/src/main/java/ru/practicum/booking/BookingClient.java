@@ -26,7 +26,6 @@ public class BookingClient {
     private static final String API_PREFIX = "/bookings";
     private RestTemplate restTemplate;
 
-
     public BookingClient(@Value("${shareIt-server.url}") String serverUrl, RestTemplateBuilder builder) {
         this.restTemplate = builder
                 .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))
@@ -70,8 +69,11 @@ public class BookingClient {
         try {
             return restTemplate.exchange(url, HttpMethod.GET, httpEntity, List.class).getBody();
         } catch (HttpStatusCodeException e) {
-            if (e.getMessage().contains("UNSUPPORTED"))
+            if (e.getMessage().contains("UNSUPPORTED")) {
                 throw new NotFoundBookingStatusException("Unknown state: " + state);
+            } else if (e.getMessage().contains("400")) {
+                throw new IllegalArgumentException(e.getMessage());
+            }
             throw new DataNotFound(e.getMessage());
         }
 
@@ -84,8 +86,11 @@ public class BookingClient {
         try {
             return restTemplate.exchange(url, HttpMethod.GET, httpEntity, List.class).getBody();
         } catch (HttpStatusCodeException e) {
-            if (e.getMessage().contains("UNSUPPORTED"))
+            if (e.getMessage().contains("UNSUPPORTED")) {
                 throw new NotFoundBookingStatusException("Unknown state: " + state);
+            } else if (e.getMessage().contains("400")) {
+                throw new IllegalArgumentException(e.getMessage());
+            }
             throw new DataNotFound(e.getMessage());
         }
     }
