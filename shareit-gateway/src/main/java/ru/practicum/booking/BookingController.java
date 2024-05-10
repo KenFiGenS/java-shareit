@@ -46,7 +46,7 @@ public class BookingController {
                                                    @RequestParam(defaultValue = "0") int from,
                                                    @RequestParam(defaultValue = "5") int size,
                                                    @RequestParam(defaultValue = "ALL") String state) {
-        log.info("Выполняется запрос на получение всех бронирований от пользователя под ID: {}, со статусом: {}", userId, state);
+        log.info("Выполняется запрос на получение бронирований от пользователя под ID: {}, со статусом: {}", userId, state);
         return bookingClient.getAllBookingsByBooker(userId, state, from, size);
     }
 
