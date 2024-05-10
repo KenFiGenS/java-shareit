@@ -4,10 +4,6 @@ services:
     build: shareit-gateway
     image: shareit-gateway-image
     container_name: shareit-gateway-container
-    volumes:
-      - "/etc/timezone:/etc/timezone:ro"
-      - "/etc/localtime:/etc/localtime:ro"
-      - /var/lib/postgresql/data/
     ports:
       - "8080:8080"
     depends_on:
@@ -19,10 +15,6 @@ services:
     build: shareit-server
     image: shareit-server-image
     container_name: shareit-server-container
-    volumes:
-      - "/etc/timezone:/etc/timezone:ro"
-      - "/etc/localtime:/etc/localtime:ro"
-      - /var/lib/postgresql/data/
     ports:
       - "9090:9090"
     depends_on:
@@ -35,10 +27,6 @@ services:
   db:
     image: postgres:16-alpine
     container_name: db-container
-    volumes:
-      - "/etc/timezone:/etc/timezone:ro"
-      - "/etc/localtime:/etc/localtime:ro"
-      - /var/lib/postgresql/data/
     ports:
       - "6541:5432"
     environment:
