@@ -17,6 +17,6 @@ public class ItemRequestDto {
     @NotBlank(groups = Marker.OnCreate.class)
     private String description;
     private User requester;
-    LocalDateTime created;
-    List<ItemDto> items;
+    private LocalDateTime created;
+    private List<ItemDto> items;
 }
